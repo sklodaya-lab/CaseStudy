@@ -35,9 +35,22 @@ namespace CASE_STUDY_7_DataAccess.Reposiotires.TradeBlotteRepo
                 query = query.Where(x => x.TradeDate <= request.ToDate.Value);
             }
 
+            if (request.TradeId.HasValue)
+            {
+                query = query.Where(t => t.TradeId == request.TradeId.Value);
+            }
+
+            if (!string.IsNullOrWhiteSpace(request.SecurityName))
+            {
+                query = query.Where(t => t.SecurityName.Contains(request.SecurityName));
+            }
+
+            if (!string.IsNullOrWhiteSpace(request.TraderName))
+            {
+                query = query.Where(t => t.TraderName.Contains(request.TraderName));
+            }
             var totalCount = await query.CountAsync(cancellationToken);
 
-            // 4. Paginate and project directly into TradeBlotterItemDto
             var items = await query
                 .OrderByDescending(x => x.TradeDate)
                 .ThenByDescending(x => x.TradeId)
@@ -54,7 +67,7 @@ namespace CASE_STUDY_7_DataAccess.Reposiotires.TradeBlotteRepo
                     BuySell = x.BuySell,
                     Quantity = x.Quantity,
                     Price = x.Price,
-                    GrossNotionalAmount = x.GrossNotionalAmount ?? 0m // Replaces null with 0.0
+                    GrossNotionalAmount = x.GrossNotionalAmount ?? 0m 
                 })
                 .ToListAsync(cancellationToken);
 
