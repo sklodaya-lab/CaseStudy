@@ -1,5 +1,7 @@
 
 using CASE_STUDY_7.DataAccess;
+using CASE_STUDY_7_DataAccess.Reposiotires.TradeBlotteRepo;
+using CASE_STUDY_7_Models.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace CASE_STUDY_7
@@ -12,9 +14,12 @@ namespace CASE_STUDY_7
 
             var connectionString = builder.Configuration.GetConnectionString("MyCon");
 
+            builder.Services.AddScoped<ITradeBlotterRepository, TradeBlotterRepository>();
+
             // Add services to the container.
 
             builder.Services.AddControllers();
+
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
