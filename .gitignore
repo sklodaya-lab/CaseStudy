@@ -1,2 +1,10 @@
-
 .vs/
+*.user
+*.suo
+
+bin/
+obj/
+
+node_modules/
+build/
+dist/
