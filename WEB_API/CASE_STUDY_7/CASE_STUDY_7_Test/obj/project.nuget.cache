@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "19byVLTmtNg=",
+  "dgSpecHash": "6wknKRiXq+I=",
   "success": true,
-  "projectFilePath": "C:\\Users\\sklodaya\\source\\repos\\CASE_STUDY_7\\CASE_STUDY_7_Test\\CASE_STUDY_7_Test.csproj",
+  "projectFilePath": "D:\\Case_Study\\WEB_API\\CASE_STUDY_7\\CASE_STUDY_7_Test\\CASE_STUDY_7_Test.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\sklodaya\\.nuget\\packages\\coverlet.collector\\6.0.0\\coverlet.collector.6.0.0.nupkg.sha512",
     "C:\\Users\\sklodaya\\.nuget\\packages\\microsoft.codecoverage\\17.8.0\\microsoft.codecoverage.17.8.0.nupkg.sha512",

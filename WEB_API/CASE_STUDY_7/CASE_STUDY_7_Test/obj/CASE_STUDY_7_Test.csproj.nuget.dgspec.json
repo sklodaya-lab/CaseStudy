@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\sklodaya\\source\\repos\\CASE_STUDY_7\\CASE_STUDY_7_Test\\CASE_STUDY_7_Test.csproj": {}
+    "D:\\Case_Study\\WEB_API\\CASE_STUDY_7\\CASE_STUDY_7_Test\\CASE_STUDY_7_Test.csproj": {}
   },
   "projects": {
-    "C:\\Users\\sklodaya\\source\\repos\\CASE_STUDY_7\\CASE_STUDY_7\\CASE_STUDY_7.csproj": {
+    "D:\\Case_Study\\WEB_API\\CASE_STUDY_7\\CASE_STUDY_7\\CASE_STUDY_7.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\sklodaya\\source\\repos\\CASE_STUDY_7\\CASE_STUDY_7\\CASE_STUDY_7.csproj",
+        "projectUniqueName": "D:\\Case_Study\\WEB_API\\CASE_STUDY_7\\CASE_STUDY_7\\CASE_STUDY_7.csproj",
         "projectName": "CASE_STUDY_7",
-        "projectPath": "C:\\Users\\sklodaya\\source\\repos\\CASE_STUDY_7\\CASE_STUDY_7\\CASE_STUDY_7.csproj",
+        "projectPath": "D:\\Case_Study\\WEB_API\\CASE_STUDY_7\\CASE_STUDY_7\\CASE_STUDY_7.csproj",
         "packagesPath": "C:\\Users\\sklodaya\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\sklodaya\\source\\repos\\CASE_STUDY_7\\CASE_STUDY_7\\obj\\",
+        "outputPath": "D:\\Case_Study\\WEB_API\\CASE_STUDY_7\\CASE_STUDY_7\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -33,11 +33,11 @@
           "net8.0": {
             "targetAlias": "net8.0",
             "projectReferences": {
-              "C:\\Users\\sklodaya\\source\\repos\\CASE_STUDY_7\\CASE_STUDY_7_DataAccess\\CASE_STUDY_7_DataAccess.csproj": {
-                "projectPath": "C:\\Users\\sklodaya\\source\\repos\\CASE_STUDY_7\\CASE_STUDY_7_DataAccess\\CASE_STUDY_7_DataAccess.csproj"
+              "D:\\Case_Study\\WEB_API\\CASE_STUDY_7\\CASE_STUDY_7_DataAccess\\CASE_STUDY_7_DataAccess.csproj": {
+                "projectPath": "D:\\Case_Study\\WEB_API\\CASE_STUDY_7\\CASE_STUDY_7_DataAccess\\CASE_STUDY_7_DataAccess.csproj"
               },
-              "C:\\Users\\sklodaya\\source\\repos\\CASE_STUDY_7\\CASE_STUDY_7_Models\\CASE_STUDY_7_Models.csproj": {
-                "projectPath": "C:\\Users\\sklodaya\\source\\repos\\CASE_STUDY_7\\CASE_STUDY_7_Models\\CASE_STUDY_7_Models.csproj"
+              "D:\\Case_Study\\WEB_API\\CASE_STUDY_7\\CASE_STUDY_7_Models\\CASE_STUDY_7_Models.csproj": {
+                "projectPath": "D:\\Case_Study\\WEB_API\\CASE_STUDY_7\\CASE_STUDY_7_Models\\CASE_STUDY_7_Models.csproj"
               }
             }
           }
@@ -86,14 +86,14 @@
         }
       }
     },
-    "C:\\Users\\sklodaya\\source\\repos\\CASE_STUDY_7\\CASE_STUDY_7_DataAccess\\CASE_STUDY_7_DataAccess.csproj": {
+    "D:\\Case_Study\\WEB_API\\CASE_STUDY_7\\CASE_STUDY_7_DataAccess\\CASE_STUDY_7_DataAccess.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\sklodaya\\source\\repos\\CASE_STUDY_7\\CASE_STUDY_7_DataAccess\\CASE_STUDY_7_DataAccess.csproj",
+        "projectUniqueName": "D:\\Case_Study\\WEB_API\\CASE_STUDY_7\\CASE_STUDY_7_DataAccess\\CASE_STUDY_7_DataAccess.csproj",
         "projectName": "CASE_STUDY_7_DataAccess",
-        "projectPath": "C:\\Users\\sklodaya\\source\\repos\\CASE_STUDY_7\\CASE_STUDY_7_DataAccess\\CASE_STUDY_7_DataAccess.csproj",
+        "projectPath": "D:\\Case_Study\\WEB_API\\CASE_STUDY_7\\CASE_STUDY_7_DataAccess\\CASE_STUDY_7_DataAccess.csproj",
         "packagesPath": "C:\\Users\\sklodaya\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\sklodaya\\source\\repos\\CASE_STUDY_7\\CASE_STUDY_7_DataAccess\\obj\\",
+        "outputPath": "D:\\Case_Study\\WEB_API\\CASE_STUDY_7\\CASE_STUDY_7_DataAccess\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -115,8 +115,8 @@
           "net8.0": {
             "targetAlias": "net8.0",
             "projectReferences": {
-              "C:\\Users\\sklodaya\\source\\repos\\CASE_STUDY_7\\CASE_STUDY_7_Models\\CASE_STUDY_7_Models.csproj": {
-                "projectPath": "C:\\Users\\sklodaya\\source\\repos\\CASE_STUDY_7\\CASE_STUDY_7_Models\\CASE_STUDY_7_Models.csproj"
+              "D:\\Case_Study\\WEB_API\\CASE_STUDY_7\\CASE_STUDY_7_Models\\CASE_STUDY_7_Models.csproj": {
+                "projectPath": "D:\\Case_Study\\WEB_API\\CASE_STUDY_7\\CASE_STUDY_7_Models\\CASE_STUDY_7_Models.csproj"
               }
             }
           }
@@ -156,14 +156,14 @@
         }
       }
     },
-    "C:\\Users\\sklodaya\\source\\repos\\CASE_STUDY_7\\CASE_STUDY_7_Models\\CASE_STUDY_7_Models.csproj": {
+    "D:\\Case_Study\\WEB_API\\CASE_STUDY_7\\CASE_STUDY_7_Models\\CASE_STUDY_7_Models.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\sklodaya\\source\\repos\\CASE_STUDY_7\\CASE_STUDY_7_Models\\CASE_STUDY_7_Models.csproj",
+        "projectUniqueName": "D:\\Case_Study\\WEB_API\\CASE_STUDY_7\\CASE_STUDY_7_Models\\CASE_STUDY_7_Models.csproj",
         "projectName": "CASE_STUDY_7_Models",
-        "projectPath": "C:\\Users\\sklodaya\\source\\repos\\CASE_STUDY_7\\CASE_STUDY_7_Models\\CASE_STUDY_7_Models.csproj",
+        "projectPath": "D:\\Case_Study\\WEB_API\\CASE_STUDY_7\\CASE_STUDY_7_Models\\CASE_STUDY_7_Models.csproj",
         "packagesPath": "C:\\Users\\sklodaya\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\sklodaya\\source\\repos\\CASE_STUDY_7\\CASE_STUDY_7_Models\\obj\\",
+        "outputPath": "D:\\Case_Study\\WEB_API\\CASE_STUDY_7\\CASE_STUDY_7_Models\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -222,14 +222,14 @@
         }
       }
     },
-    "C:\\Users\\sklodaya\\source\\repos\\CASE_STUDY_7\\CASE_STUDY_7_Test\\CASE_STUDY_7_Test.csproj": {
+    "D:\\Case_Study\\WEB_API\\CASE_STUDY_7\\CASE_STUDY_7_Test\\CASE_STUDY_7_Test.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\sklodaya\\source\\repos\\CASE_STUDY_7\\CASE_STUDY_7_Test\\CASE_STUDY_7_Test.csproj",
+        "projectUniqueName": "D:\\Case_Study\\WEB_API\\CASE_STUDY_7\\CASE_STUDY_7_Test\\CASE_STUDY_7_Test.csproj",
         "projectName": "CASE_STUDY_7_Test",
-        "projectPath": "C:\\Users\\sklodaya\\source\\repos\\CASE_STUDY_7\\CASE_STUDY_7_Test\\CASE_STUDY_7_Test.csproj",
+        "projectPath": "D:\\Case_Study\\WEB_API\\CASE_STUDY_7\\CASE_STUDY_7_Test\\CASE_STUDY_7_Test.csproj",
         "packagesPath": "C:\\Users\\sklodaya\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\sklodaya\\source\\repos\\CASE_STUDY_7\\CASE_STUDY_7_Test\\obj\\",
+        "outputPath": "D:\\Case_Study\\WEB_API\\CASE_STUDY_7\\CASE_STUDY_7_Test\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -251,14 +251,14 @@
           "net8.0": {
             "targetAlias": "net8.0",
             "projectReferences": {
-              "C:\\Users\\sklodaya\\source\\repos\\CASE_STUDY_7\\CASE_STUDY_7\\CASE_STUDY_7.csproj": {
-                "projectPath": "C:\\Users\\sklodaya\\source\\repos\\CASE_STUDY_7\\CASE_STUDY_7\\CASE_STUDY_7.csproj"
+              "D:\\Case_Study\\WEB_API\\CASE_STUDY_7\\CASE_STUDY_7\\CASE_STUDY_7.csproj": {
+                "projectPath": "D:\\Case_Study\\WEB_API\\CASE_STUDY_7\\CASE_STUDY_7\\CASE_STUDY_7.csproj"
               },
-              "C:\\Users\\sklodaya\\source\\repos\\CASE_STUDY_7\\CASE_STUDY_7_DataAccess\\CASE_STUDY_7_DataAccess.csproj": {
-                "projectPath": "C:\\Users\\sklodaya\\source\\repos\\CASE_STUDY_7\\CASE_STUDY_7_DataAccess\\CASE_STUDY_7_DataAccess.csproj"
+              "D:\\Case_Study\\WEB_API\\CASE_STUDY_7\\CASE_STUDY_7_DataAccess\\CASE_STUDY_7_DataAccess.csproj": {
+                "projectPath": "D:\\Case_Study\\WEB_API\\CASE_STUDY_7\\CASE_STUDY_7_DataAccess\\CASE_STUDY_7_DataAccess.csproj"
               },
-              "C:\\Users\\sklodaya\\source\\repos\\CASE_STUDY_7\\CASE_STUDY_7_Models\\CASE_STUDY_7_Models.csproj": {
-                "projectPath": "C:\\Users\\sklodaya\\source\\repos\\CASE_STUDY_7\\CASE_STUDY_7_Models\\CASE_STUDY_7_Models.csproj"
+              "D:\\Case_Study\\WEB_API\\CASE_STUDY_7\\CASE_STUDY_7_Models\\CASE_STUDY_7_Models.csproj": {
+                "projectPath": "D:\\Case_Study\\WEB_API\\CASE_STUDY_7\\CASE_STUDY_7_Models\\CASE_STUDY_7_Models.csproj"
               }
             }
           }

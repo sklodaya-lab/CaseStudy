@@ -10,4 +10,9 @@
     <ProjectReference Include="..\CASE_STUDY_7_Models\CASE_STUDY_7_Models.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="DataAccess\" />
+    <Folder Include="Migrations\" />
+  </ItemGroup>
+
 </Project>
