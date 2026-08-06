@@ -1,0 +1,144 @@
+{
+  "format": 1,
+  "restore": {
+    "C:\\Users\\sklodaya\\source\\repos\\CASE_STUDY_7\\CASE_STUDY_7_DataAccess\\CASE_STUDY_7_DataAccess.csproj": {}
+  },
+  "projects": {
+    "C:\\Users\\sklodaya\\source\\repos\\CASE_STUDY_7\\CASE_STUDY_7_DataAccess\\CASE_STUDY_7_DataAccess.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "C:\\Users\\sklodaya\\source\\repos\\CASE_STUDY_7\\CASE_STUDY_7_DataAccess\\CASE_STUDY_7_DataAccess.csproj",
+        "projectName": "CASE_STUDY_7_DataAccess",
+        "projectPath": "C:\\Users\\sklodaya\\source\\repos\\CASE_STUDY_7\\CASE_STUDY_7_DataAccess\\CASE_STUDY_7_DataAccess.csproj",
+        "packagesPath": "C:\\Users\\sklodaya\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\sklodaya\\source\\repos\\CASE_STUDY_7\\CASE_STUDY_7_DataAccess\\obj\\",
+        "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
+        "configFilePaths": [
+          "C:\\Users\\sklodaya\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net8.0"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "C:\\Program Files\\dotnet\\library-packs": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net8.0": {
+            "targetAlias": "net8.0",
+            "projectReferences": {
+              "C:\\Users\\sklodaya\\source\\repos\\CASE_STUDY_7\\CASE_STUDY_7_Models\\CASE_STUDY_7_Models.csproj": {
+                "projectPath": "C:\\Users\\sklodaya\\source\\repos\\CASE_STUDY_7\\CASE_STUDY_7_Models\\CASE_STUDY_7_Models.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        },
+        "SdkAnalysisLevel": "9.0.300"
+      },
+      "frameworks": {
+        "net8.0": {
+          "targetAlias": "net8.0",
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.315/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "C:\\Users\\sklodaya\\source\\repos\\CASE_STUDY_7\\CASE_STUDY_7_Models\\CASE_STUDY_7_Models.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "C:\\Users\\sklodaya\\source\\repos\\CASE_STUDY_7\\CASE_STUDY_7_Models\\CASE_STUDY_7_Models.csproj",
+        "projectName": "CASE_STUDY_7_Models",
+        "projectPath": "C:\\Users\\sklodaya\\source\\repos\\CASE_STUDY_7\\CASE_STUDY_7_Models\\CASE_STUDY_7_Models.csproj",
+        "packagesPath": "C:\\Users\\sklodaya\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\sklodaya\\source\\repos\\CASE_STUDY_7\\CASE_STUDY_7_Models\\obj\\",
+        "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
+        "configFilePaths": [
+          "C:\\Users\\sklodaya\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net8.0"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "C:\\Program Files\\dotnet\\library-packs": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net8.0": {
+            "targetAlias": "net8.0",
+            "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        },
+        "SdkAnalysisLevel": "9.0.300"
+      },
+      "frameworks": {
+        "net8.0": {
+          "targetAlias": "net8.0",
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.315/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    }
+  }
+}

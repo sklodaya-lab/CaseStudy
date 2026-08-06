@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\CASE_STUDY_7_DataAccess\CASE_STUDY_7_DataAccess.csproj" />
+    <ProjectReference Include="..\CASE_STUDY_7_Models\CASE_STUDY_7_Models.csproj" />
+  </ItemGroup>
+
+</Project>

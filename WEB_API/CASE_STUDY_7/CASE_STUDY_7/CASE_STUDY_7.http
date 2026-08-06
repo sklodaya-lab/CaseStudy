@@ -1,0 +1,6 @@
+@CASE_STUDY_7_HostAddress = http://localhost:5187
+
+GET {{CASE_STUDY_7_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
