@@ -1,20 +1,7 @@
 {
   "Version": 1,
   "WorkspaceRootPath": "D:\\Case_Study\\WEB_API\\CASE_STUDY_7\\",
-  "Documents": [
-    {
-      "AbsoluteMoniker": "D:0:0:{7388DDF7-1378-42DD-A043-3F3DA9A9A573}|CASE_STUDY_7_Test\\CASE_STUDY_7_Test.csproj|d:\\case_study\\web_api\\case_study_7\\case_study_7_test\\unittest1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{7388DDF7-1378-42DD-A043-3F3DA9A9A573}|CASE_STUDY_7_Test\\CASE_STUDY_7_Test.csproj|solutionrelative:case_study_7_test\\unittest1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{9384DEF7-EBAF-43F8-ADA7-77FC5F628075}|CASE_STUDY_7_Models\\CASE_STUDY_7_Models.csproj|d:\\case_study\\web_api\\case_study_7\\case_study_7_models\\class1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{9384DEF7-EBAF-43F8-ADA7-77FC5F628075}|CASE_STUDY_7_Models\\CASE_STUDY_7_Models.csproj|solutionrelative:case_study_7_models\\class1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{E3059809-C25F-4620-8E42-0B213F1823DF}|CASE_STUDY_7_DataAccess\\CASE_STUDY_7_DataAccess.csproj|d:\\case_study\\web_api\\case_study_7\\case_study_7_dataaccess\\class1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{E3059809-C25F-4620-8E42-0B213F1823DF}|CASE_STUDY_7_DataAccess\\CASE_STUDY_7_DataAccess.csproj|solutionrelative:case_study_7_dataaccess\\class1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    }
-  ],
+  "Documents": [],
   "DocumentGroupContainers": [
     {
       "Orientation": 0,
@@ -22,7 +9,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 2,
+          "SelectedChildIndex": -1,
           "Children": [
             {
               "$type": "Bookmark",
@@ -31,43 +18,6 @@
             {
               "$type": "Bookmark",
               "Name": "ST:0:0:{3ae79031-e1bc-11d0-8f78-00a0c9110057}"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "UnitTest1.cs",
-              "DocumentMoniker": "D:\\Case_Study\\WEB_API\\CASE_STUDY_7\\CASE_STUDY_7_Test\\UnitTest1.cs",
-              "RelativeDocumentMoniker": "CASE_STUDY_7_Test\\UnitTest1.cs",
-              "ToolTip": "D:\\Case_Study\\WEB_API\\CASE_STUDY_7\\CASE_STUDY_7_Test\\UnitTest1.cs",
-              "RelativeToolTip": "CASE_STUDY_7_Test\\UnitTest1.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAABAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-08-06T07:21:22.811Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "Class1.cs",
-              "DocumentMoniker": "D:\\Case_Study\\WEB_API\\CASE_STUDY_7\\CASE_STUDY_7_Models\\Class1.cs",
-              "RelativeDocumentMoniker": "CASE_STUDY_7_Models\\Class1.cs",
-              "ToolTip": "D:\\Case_Study\\WEB_API\\CASE_STUDY_7\\CASE_STUDY_7_Models\\Class1.cs",
-              "RelativeToolTip": "CASE_STUDY_7_Models\\Class1.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-08-06T07:16:17.313Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "Class1.cs",
-              "DocumentMoniker": "D:\\Case_Study\\WEB_API\\CASE_STUDY_7\\CASE_STUDY_7_DataAccess\\Class1.cs",
-              "RelativeDocumentMoniker": "CASE_STUDY_7_DataAccess\\Class1.cs",
-              "ToolTip": "D:\\Case_Study\\WEB_API\\CASE_STUDY_7\\CASE_STUDY_7_DataAccess\\Class1.cs",
-              "RelativeToolTip": "CASE_STUDY_7_DataAccess\\Class1.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-08-06T07:14:29.103Z"
             }
           ]
         }
