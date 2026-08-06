@@ -35,20 +35,16 @@ namespace CASE_STUDY_7_DataAccess.Reposiotires.TradeBlotteRepo
                 query = query.Where(x => x.TradeDate <= request.ToDate.Value);
             }
 
-            if (request.TradeId.HasValue)
+            if (!string.IsNullOrWhiteSpace(request.SecurityId))
             {
-                query = query.Where(t => t.TradeId == request.TradeId.Value);
+                query = query.Where(t => t.SecurityId == request.SecurityId);
             }
 
-            if (!string.IsNullOrWhiteSpace(request.SecurityName))
+            if (request.TraderId.HasValue)
             {
-                query = query.Where(t => t.SecurityName.Contains(request.SecurityName));
+                query = query.Where(t => t.TraderId == request.TraderId.Value);
             }
 
-            if (!string.IsNullOrWhiteSpace(request.TraderName))
-            {
-                query = query.Where(t => t.TraderName.Contains(request.TraderName));
-            }
             var totalCount = await query.CountAsync(cancellationToken);
 
             var items = await query

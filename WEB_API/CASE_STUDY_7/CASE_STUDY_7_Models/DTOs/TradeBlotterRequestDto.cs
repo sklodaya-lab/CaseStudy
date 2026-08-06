@@ -11,9 +11,8 @@ namespace CASE_STUDY_7_Models.DTOs
         public DateOnly? FromDate { get; set; }
         public DateOnly? ToDate { get; set; }
 
-        public int? TradeId { get; set; }
-        public string? SecurityName { get; set; }
-        public string? TraderName { get; set; }
+        public string? SecurityId { get; set; }
+        public int? TraderId { get; set; }
 
         private int pageNumber = 1;
         private int pageSize = 50;
