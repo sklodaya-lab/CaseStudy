@@ -9,6 +9,6 @@ namespace CASE_STUDY_7_Models.Interfaces
 {
     public interface IPnlCalculationService
     {
-        Task<IEnumerable<PnlSummaryDto>> GetPnLSummaryAsync(DateTime asOfDate, string? securityId = null);
+        Task<IEnumerable<PnlSummaryDto>> GetPnLSummaryAsync(DateOnly asOfDate, string? securityId = null);
     }
 }

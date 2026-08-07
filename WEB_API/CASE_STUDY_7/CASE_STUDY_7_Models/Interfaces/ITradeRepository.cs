@@ -9,6 +9,6 @@ namespace CASE_STUDY_7_Models.Interfaces
 {
     public interface ITradeRepository
     {
-        Task<IReadOnlyList<Trade>> GetTradesUpToDateAsync(DateTime asOfDate, string? securityId = null);
+        Task<IReadOnlyList<Trade>> GetTradesUpToDateAsync(DateOnly asOfDate, string? securityId = null);
     }
 }

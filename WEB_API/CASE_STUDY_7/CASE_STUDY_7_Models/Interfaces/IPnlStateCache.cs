@@ -9,6 +9,6 @@ namespace CASE_STUDY_7_Models.Interfaces
 {
     public interface IPnlStateCache
     {
-        Task<SecurityPositionState> GetPositionStateAsync(string securityId, DateTime asOfDate);
+        Task<SecurityPositionState> GetPositionStateAsync(string securityId, DateOnly asOfDate);
     }
 }
