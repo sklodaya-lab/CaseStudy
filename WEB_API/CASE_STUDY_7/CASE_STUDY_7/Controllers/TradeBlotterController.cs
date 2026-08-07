@@ -20,6 +20,10 @@ namespace CASE_STUDY_7.Controllers
         public async Task<IActionResult> GetTradeBlotter( [FromQuery] TradeBlotterRequestDto request,CancellationToken cancellationToken)
         {
             var result = await _repository.GetTradeBlotterAsync(request, cancellationToken);
+            if(result == null)
+            {
+                return NotFound();
+            }
             return Ok(result);
         }
     }
