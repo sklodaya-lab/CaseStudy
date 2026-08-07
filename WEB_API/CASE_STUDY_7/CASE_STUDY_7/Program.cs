@@ -21,7 +21,7 @@ namespace CASE_STUDY_7
 
             var connectionString = builder.Configuration.GetConnectionString("MyCon");
 
-            builder.Services.AddScoped<ITradeBlotterRepository, TradeBlotterRepository>();
+           
 
             // Add services to the container.
 
@@ -39,6 +39,9 @@ namespace CASE_STUDY_7
             builder.Services.AddTransient<IPriceRepository, PriceRepository>();
             builder.Services.AddTransient<IPnlCalculatorEngine, PnlCalculatorEngine>();
             builder.Services.AddTransient<IPnlCalculationService, PnlCalculationService>();
+            builder.Services.AddTransient<ITradeBlotterRepository, TradeBlotterRepository>();
+            builder.Services.AddTransient<ITraderRepository, TraderRepository>();
+            builder.Services.AddTransient<ISecurityRepository,SecurityRepository>();
 
             // 2. In-Memory State Cache (Singleton)[cite: 1]
             builder.Services.AddSingleton<IPnlStateCache, PnlStateCache>();
