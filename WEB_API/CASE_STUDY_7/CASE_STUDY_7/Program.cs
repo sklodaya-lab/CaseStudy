@@ -1,7 +1,14 @@
 
 using CASE_STUDY_7.DataAccess;
+
+using CASE_STUDY_7_DataAccess;
 using CASE_STUDY_7_DataAccess.Reposiotires.TradeBlotteRepo;
+using CASE_STUDY_7_DataAccess.Repositories;
 using CASE_STUDY_7_Models.Interfaces;
+using CASE_STUDY_Core.Cache;
+using CASE_STUDY_Core.Engine;
+using CASE_STUDY_Core.Services;
+
 using Microsoft.EntityFrameworkCore;
 
 namespace CASE_STUDY_7
@@ -27,6 +34,14 @@ namespace CASE_STUDY_7
             builder.Services.AddDbContext<Vantage7Context>(options =>
                 options.UseSqlServer(connectionString));
             builder.Services.AddCors(options => options.AddPolicy("MytestCors", policy => policy.WithOrigins("http://localhost:5173").AllowAnyHeader().AllowAnyMethod()));
+
+            builder.Services.AddTransient<ITradeRepository, TradeRepository>();
+            builder.Services.AddTransient<IPriceRepository, PriceRepository>();
+            builder.Services.AddTransient<IPnlCalculatorEngine, PnlCalculatorEngine>();
+            builder.Services.AddTransient<IPnlCalculationService, PnlCalculationService>();
+
+            // 2. In-Memory State Cache (Singleton)[cite: 1]
+            builder.Services.AddSingleton<IPnlStateCache, PnlStateCache>();
 
             var app = builder.Build();
 
