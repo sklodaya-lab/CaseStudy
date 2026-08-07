@@ -36,7 +36,7 @@ public partial class Vantage7Context : DbContext
         {
             entity.HasKey(e => e.PriceId);
 
-            entity.ToTable("EOD_Prices", "G7");
+            entity.ToTable("EOD_Prices", "g7");
 
             entity.HasIndex(e => new { e.SecurityId, e.PriceDate }, "UQ_EODPrices_Security_Date").IsUnique();
 
@@ -55,7 +55,7 @@ public partial class Vantage7Context : DbContext
 
         modelBuilder.Entity<Security>(entity =>
         {
-            entity.ToTable("Securities", "G7");
+            entity.ToTable("Securities", "g7");
 
             entity.Property(e => e.SecurityId)
                 .HasMaxLength(10)
@@ -73,7 +73,7 @@ public partial class Vantage7Context : DbContext
 
         modelBuilder.Entity<Trade>(entity =>
         {
-            entity.ToTable("Trades", "G7");
+            entity.ToTable("Trades", "g7");
 
             entity.HasIndex(e => new { e.SecurityId, e.TradeDate, e.TradeId }, "IX_Trades_Security_TradeDate");
 
