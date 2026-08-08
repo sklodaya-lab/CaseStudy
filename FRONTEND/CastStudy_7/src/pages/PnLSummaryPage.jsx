@@ -1,18 +1,11 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
-  Container,
-  Typography,
-  CircularProgress,
-  Alert,
-  Box,
-  Paper,
-  Grid,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
-  Button,
+  Container, Typography, CircularProgress, Alert, Chip,
+  Box, Paper, Grid, FormControl, InputLabel, Select, MenuItem, Button
 } from '@mui/material';
+import SearchIcon from '@mui/icons-material/Search';
+import RefreshIcon from '@mui/icons-material/Refresh';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
@@ -20,6 +13,9 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { getPnLSummary } from '../services/api';
 import PnLSummaryCards from '../components/PnLSummaryCards';
 import PnLTable from '../components/PnLTable';
+import PnLSummaryChart from '../Components/PnLSummaryChart';
+import PnLPieChart from '../Components/PnLPieChart';
+
 
 const HARDCODED_SECURITIES = [
   { id: 'BD01', name: 'Government of India 7.26% GS 2033' },
@@ -36,56 +32,55 @@ const HARDCODED_SECURITIES = [
 ];
 
 export default function PnLSummaryPage() {
-  const [data, setData] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
+  const [data, setData] = useState(null); // Initial null state (no data loaded)
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
   // Filter states
   const [asOfDate, setAsOfDate] = useState(null);
-  const [securityId, setSecurityId] = useState('');
+  const [securityId, setSecurityId] = useState([]);
 
-  // Fetch wrapper
-  const fetchData = useCallback(async (filters = {}) => {
+  // Fetch API explicitly called only via user interaction
+  const handleFetchData = useCallback(async () => {
     setLoading(true);
     setError(null);
+
+    const formattedDate = asOfDate && asOfDate.isValid() ? asOfDate.format('YYYY-MM-DD') : null;
+
     try {
-      const res = await getPnLSummary(filters);
+      const res = await getPnLSummary({
+        asOfDate: formattedDate,
+        securityId: securityId || null,
+      });
       setData(res);
     } catch (err) {
       setError(err.message || 'Failed to fetch data');
     } finally {
       setLoading(false);
     }
-  }, []);
-
-  // Initial load without filters
-  useEffect(() => {
-    fetchData();
-  }, [fetchData]);
-
-  // Handlers
-  const handleApplyFilters = () => {
-    // Converts Dayjs object directly to 'YYYY-MM-DD' string format
-    const formattedDate = asOfDate && asOfDate.isValid() 
-      ? asOfDate.format('YYYY-MM-DD') 
-      : null;
-
-    fetchData({
-      asOfDate: formattedDate,
-      securityId: securityId || null,
-    });
-  };
+  }, [asOfDate, securityId]);
 
   const handleResetFilters = () => {
     setAsOfDate(null);
-    setSecurityId('');
-    fetchData();
+    setSecurityId([]);
+    setData(null);
+    setError(null);
   };
 
-  // KPI Calculations
-  const totalPnL = data.reduce((acc, curr) => acc + curr.totalPnL, 0);
-  const totalRealized = data.reduce((acc, curr) => acc + curr.realizedPnL, 0);
-  const totalUnrealized = data.reduce((acc, curr) => acc + curr.mtmUnrealizedPnL, 0);
+  // Click row handler -> Navigates to detail view
+  const handleRowClick = (selectedSecurityId) => {
+    const formattedDate = asOfDate && asOfDate.isValid() ? asOfDate.format('YYYY-MM-DD') : '';
+    const query = formattedDate ? `?asOfDate=${formattedDate}` : '';
+    navigate(`/pnl/timeseries/${selectedSecurityId}${query}`);
+    selectedSecurityId.preventDefault();
+  };
+
+  // KPI Calculations (Safely fallback to empty array if data is null)
+  const safeData = data || [];
+  const totalPnL = safeData.reduce((acc, curr) => acc + curr.totalPnL, 0);
+  const totalRealized = safeData.reduce((acc, curr) => acc + curr.realizedPnL, 0);
+  const totalUnrealized = safeData.reduce((acc, curr) => acc + curr.mtmUnrealizedPnL, 0);
 
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -95,38 +90,41 @@ export default function PnLSummaryPage() {
         </Typography>
 
         {/* Filter Controls Bar */}
-        <Paper elevation={1} sx={{ p: 2.5, mb: 4, backgroundColor: 'background.paper' }}>
-          <Grid container spacing={2} alignItems="center">
-            {/* Date Picker with explicit display format */}
-            <Grid item xs={12} sm={4} md={3}>
+        <Paper elevation={2} sx={{ p: 2.5, mb: 4, backgroundColor: 'background.paper' }}>
+          <Grid container spacing={2} >
+            {/* Date Picker */}
+            <Grid item xs={12} sm={4} md={3} >
               <DatePicker
                 label="As Of Date (Optional)"
                 value={asOfDate}
                 onChange={(newValue) => setAsOfDate(newValue)}
                 format="YYYY-MM-DD"
-                slotProps={{ 
-                  textField: { 
-                    size: 'small', 
-                    fullWidth: true,
-                    placeholder: 'YYYY-MM-DD'
-                  } 
-                }}
+                slotProps={{ textField: { size: 'small', fullWidth: true, placeholder: 'YYYY-MM-DD' } }}
               />
             </Grid>
 
             {/* Security Dropdown */}
-            <Grid item xs={12} sm={4} md={4}>
+            <Grid item xs={12} sm={4} md={3} size="grow">
               <FormControl size="small" fullWidth>
                 <InputLabel id="security-select-label">Security (Optional)</InputLabel>
                 <Select
                   labelId="security-select-label"
-                  value={securityId}
+                  multiple
+                  value={securityId} // Should be an array in state: useState([])
                   label="Security (Optional)"
-                  onChange={(e) => setSecurityId(e.target.value)}
+                  onChange={(e) => {
+                    const { target: { value } } = e;
+                    // Handles MUI's edge case where selection comes as string or array
+                    setSecurityId(typeof value === 'string' ? value.split(',') : value);
+                  }}
+                  renderValue={(selected) => (
+                    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                      {selected.map((value) => (
+                        <Chip key={value} label={value} size="small" />
+                      ))}
+                    </Box>
+                  )}
                 >
-                  <MenuItem value="">
-                    <em>All Securities</em>
-                  </MenuItem>
                   {HARDCODED_SECURITIES.map((item) => (
                     <MenuItem key={item.id} value={item.id}>
                       {item.id} - {item.name}
@@ -138,33 +136,57 @@ export default function PnLSummaryPage() {
 
             {/* Action Buttons */}
             <Grid item xs={12} sm={4} md={5} display="flex" gap={1}>
-              <Button variant="contained" onClick={handleApplyFilters} disableElevation>
-                Apply Filters
+              <Button
+                variant="contained"
+                onClick={handleFetchData}
+                startIcon={<SearchIcon />}
+                sx={{
+                  backgroundColor: '#3a05fa',
+                  '&:hover': {
+                    backgroundColor: '#2b03be', // Slightly darker shade for hover effect
+                  },
+                }}
+              >
+                Fetch Data
               </Button>
-              <Button variant="outlined" color="inherit" onClick={handleResetFilters}>
+              <Button
+                variant="outlined"
+                color="inherit"
+                onClick={handleResetFilters}
+                startIcon={<RefreshIcon />}
+                
+              >
                 Reset
               </Button>
             </Grid>
           </Grid>
         </Paper>
 
-        {/* Data / Loading / Error states */}
+        {/* Display Logic Based on App State */}
         {loading ? (
           <Box display="flex" justifyContent="center" py={8}>
             <CircularProgress />
           </Box>
         ) : error ? (
-          <Alert severity="error" sx={{ mb: 4 }}>
-            {error}
-          </Alert>
+          <Alert severity="error" sx={{ mb: 4 }}>{error}</Alert>
+        ) : data === null ? (
+          // Placeholder state before user clicks "Fetch Data"
+          <Paper elevation={0} sx={{ p: 6, textAlign: 'center', backgroundColor: 'action.hover' }}>
+            <Typography variant="h6" color="text.secondary">
+              Select your filters above and click <strong>Fetch Data</strong> to view portfolio performance.
+            </Typography>
+          </Paper>
         ) : (
           <>
+
             <PnLSummaryCards
               totalPnL={totalPnL}
               totalRealized={totalRealized}
               totalUnrealized={totalUnrealized}
             />
-            <PnLTable data={data} />
+            <PnLPieChart data={data} />
+            <PnLSummaryChart data={data} />
+            <PnLTable data={data} onRowClick={handleRowClick} />
           </>
         )}
       </Container>
