@@ -1,4 +1,5 @@
-﻿using CASE_STUDY_7_Models.DTOs;
+﻿using CASE_STUDY_7_DataAccess.Reposiotires.TradeBlotteRepo;
+using CASE_STUDY_7_Models.DTOs;
 using CASE_STUDY_7_Models.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
@@ -53,6 +54,15 @@ namespace CASE_STUDY_7.Controllers
             }
 
             return Ok(result);
+        }
+
+        [HttpGet("analytics")]
+        public async Task<IActionResult> GetTradeBlotterAnalytics(
+                        [FromQuery] TradeBlotterRequestDto request,
+                        CancellationToken cancellationToken)
+        {
+            var analyticsData = await _repository.GetTradeBlotterAnalyticsAsync(request, cancellationToken);
+            return Ok(analyticsData);
         }
     }
 }

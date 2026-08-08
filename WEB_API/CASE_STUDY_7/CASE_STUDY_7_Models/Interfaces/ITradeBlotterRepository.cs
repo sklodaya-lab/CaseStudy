@@ -10,5 +10,7 @@ namespace CASE_STUDY_7_Models.Interfaces
     public interface ITradeBlotterRepository
     {
         public Task<TradeBlotterPagedResultDto> GetTradeBlotterAsync(TradeBlotterRequestDto request, CancellationToken cancellationToken = default);
+
+        Task<object> GetTradeBlotterAnalyticsAsync(TradeBlotterRequestDto request, CancellationToken cancellationToken = default);
     }
 }
