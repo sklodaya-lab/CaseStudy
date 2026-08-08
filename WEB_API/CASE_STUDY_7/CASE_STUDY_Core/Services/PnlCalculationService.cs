@@ -29,29 +29,32 @@ namespace CASE_STUDY_Core.Services
             _context = context;
         }
 
-        public async Task<IEnumerable<PnlSummaryDto>> GetPnLSummaryAsync(DateOnly asOfDate, string? securityId = null)
+        public async Task<IEnumerable<PnlSummaryDto>> GetPnLSummaryAsync(DateOnly asOfDate, IEnumerable<string>? securityIds = null)
         {
-            // 1. Fetch all securities (or filter by specific security)
+            // Convert to a HashSet for O(1) lookup during filtering
+            var secIdSet = securityIds != null && securityIds.Any()
+                ? new HashSet<string>(securityIds.Where(id => !string.IsNullOrWhiteSpace(id)), StringComparer.OrdinalIgnoreCase)
+                : null;
+
+            // 1. Fetch securities (filtered by list if provided)
             var securitiesQuery = _context.Securities.AsNoTracking();
-            if (!string.IsNullOrWhiteSpace(securityId))
+
+            if (secIdSet != null && secIdSet.Count > 0)
             {
-                securitiesQuery = securitiesQuery.Where(s => s.SecurityId == securityId);
+                securitiesQuery = securitiesQuery.Where(s => secIdSet.Contains(s.SecurityId));
             }
+
             var securities = await securitiesQuery.ToListAsync();
 
             // 2. Fetch closing prices for all securities as of target date
             var prices = await _priceRepo.GetLatestPricesForAllAsync(asOfDate);
 
-            // 3. Process securities in parallel across threads
+            // 3. Process the filtered list of securities concurrently
             var summaryTasks = securities.Select(async security =>
             {
-                // Ensures all daily states from start to asOfDate are hydrated in cache
                 var positionState = await _stateCache.GetPositionStateAsync(security.SecurityId, asOfDate);
 
-                // Get closing price (fallback to StartPrice if no EOD price exists)
                 decimal closePrice = prices.TryGetValue(security.SecurityId, out var p) ? p : security.StartPrice;
-
-                // Calculate Mark-to-Market Unrealized PnL
                 decimal unrealizedPnL = _calcEngine.CalculateUnrealizedPnL(positionState, closePrice);
 
                 return new PnlSummaryDto
@@ -69,6 +72,40 @@ namespace CASE_STUDY_Core.Services
 
             var results = await Task.WhenAll(summaryTasks);
             return results.OrderBy(r => r.SecurityId);
+        }
+
+        public async Task<IEnumerable<PnlTimeSeriesDTO>> GetPnlTimeSeriesAsync(string securityId, DateOnly? asOfDate = null)
+        {
+            var maxDate = asOfDate ?? new DateOnly(2026, 03, 31);
+
+            // 1. Extract already-cached daily snapshots
+            var cachedHistory = _stateCache.GetHistoryFromCache(securityId, maxDate);
+
+            // 2. Fetch prices as of target date
+            var prices = await _priceRepo.GetLatestPricesForAllAsync(maxDate);
+
+            // 3. Project to DTOs instantly
+            var timeSeries = new List<PnlTimeSeriesDTO>();
+
+            foreach (var (date, state) in cachedHistory)
+            {
+                var priceOnDate = await _priceRepo.GetLatestPriceAsync(securityId, date);
+                decimal closePrice = priceOnDate ?? 0m;
+                decimal unrealizedPnL = _calcEngine.CalculateUnrealizedPnL(state, closePrice);
+
+                timeSeries.Add(new PnlTimeSeriesDTO
+                {
+                    ValuationDate = date,
+                    SecurityId = securityId,
+                    NetPosition = state.NetQuantity,
+                    WeightedAverageCost = state.WeightedAverageCost,
+                    ClosingPrice = closePrice,
+                    RealizedPnL = state.RealizedPnL,
+                    MtmUnrealizedPnL = unrealizedPnL
+                });
+            }
+
+            return timeSeries;
         }
     }
 }
