@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace CASE_STUDY_7_DataAccess.Reposiotires.TradeBlotteRepo
@@ -35,14 +36,16 @@ namespace CASE_STUDY_7_DataAccess.Reposiotires.TradeBlotteRepo
                 query = query.Where(x => x.TradeDate <= request.ToDate.Value);
             }
 
-            if (!string.IsNullOrWhiteSpace(request.SecurityId))
+            // Updated: Check if SecurityIds list has elements, then apply .Contains()
+            if (request.SecurityIds != null && request.SecurityIds.Any())
             {
-                query = query.Where(t => t.SecurityId == request.SecurityId);
+                query = query.Where(t => request.SecurityIds.Contains(t.SecurityId));
             }
 
-            if (request.TraderId.HasValue)
+            // Updated: Check if TraderIds list has elements, then apply .Contains()
+            if (request.TraderIds != null && request.TraderIds.Any())
             {
-                query = query.Where(t => t.TraderId == request.TraderId.Value);
+                query = query.Where(t => request.TraderIds.Contains(t.TraderId));
             }
 
             var totalCount = await query.CountAsync(cancellationToken);
@@ -63,7 +66,7 @@ namespace CASE_STUDY_7_DataAccess.Reposiotires.TradeBlotteRepo
                     BuySell = x.BuySell,
                     Quantity = x.Quantity,
                     Price = x.Price,
-                    GrossNotionalAmount = x.GrossNotionalAmount ?? 0m 
+                    GrossNotionalAmount = x.GrossNotionalAmount ?? 0m
                 })
                 .ToListAsync(cancellationToken);
 
