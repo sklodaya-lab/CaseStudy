@@ -10,5 +10,7 @@ namespace CASE_STUDY_7_Models.Interfaces
     public interface IPnlStateCache
     {
         Task<SecurityPositionState> GetPositionStateAsync(string securityId, DateOnly asOfDate);
+        
+        IReadOnlyList<(DateOnly Date, SecurityPositionState State)> GetHistoryFromCache(string securityId, DateOnly maxDate);
     }
 }

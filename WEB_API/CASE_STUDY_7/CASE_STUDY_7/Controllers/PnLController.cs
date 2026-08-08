@@ -1,4 +1,5 @@
 ﻿using CASE_STUDY_7.DataAccess;
+using CASE_STUDY_7.ModelBinders;
 using CASE_STUDY_7_Models.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -27,13 +28,25 @@ namespace CASE_STUDY_7.Controllers
         [HttpGet("summary")]
         public async Task<IActionResult> GetPnLSummary(
             [FromQuery] DateOnly? asOfDate,
-            [FromQuery] string? securityId)
+            [ModelBinder(BinderType = typeof(IdListBinder))] List<string>? securityId)
         {
             // Default to end-of-period benchmark date specified in case study
             var targetDate = asOfDate ?? new DateOnly(2026, 03, 31);
 
             var summaryResults = await _pnlService.GetPnLSummaryAsync(targetDate, securityId);
             return Ok(summaryResults);
+        }
+
+        [HttpGet("timeseries")]
+        public async Task<IActionResult> GetPnlTimeSeries( [FromQuery] string securityId, [FromQuery] DateOnly? asOfDate)
+        {
+            if (string.IsNullOrWhiteSpace(securityId))
+            {
+                return BadRequest(new { message = "Parameter 'securityId' is required." });
+            }
+
+            var results = await _pnlService.GetPnlTimeSeriesAsync(securityId, asOfDate);
+            return Ok(results);
         }
     }
 }

@@ -27,6 +27,17 @@ namespace CASE_STUDY_Core.Cache
             _scopeFactory = scopeFactory;
         }
 
+
+        public IReadOnlyList<(DateOnly Date, SecurityPositionState State)> GetHistoryFromCache(string securityId, DateOnly maxDate)
+        {
+            // Filter and return already-cached keys in memory without running SQL or engine loops
+            return _store.Keys
+                .Where(d => d <= maxDate && _store[d].ContainsKey(securityId))
+                .OrderBy(d => d)
+                .Select(d => (Date: d, State: _store[d][securityId].DeepClone()))
+                .ToList();
+        }
+
         public async Task<SecurityPositionState> GetPositionStateAsync(string securityId, DateOnly asOfDate)
         {
             // O(1) direct lookup if already computed
