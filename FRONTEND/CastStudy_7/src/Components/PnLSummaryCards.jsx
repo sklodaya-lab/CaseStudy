@@ -6,31 +6,40 @@ export default function PnLSummaryCards({ totalPnL, totalRealized, totalUnrealiz
     new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(val || 0);
 
   return (
-    <Grid container spacing={3} sx={{ mb: 4 }}>
+    <Grid container spacing={3} sx={{ mb: 4, width: '100%' }}>
+      {/* Changed 'size' prop to standard item props: item xs={12} sm={4} */}
       <Grid item xs={12} sm={4}>
-        <Card elevation={2}>
+        <Card elevation={2} sx={{ height: '100%' }}>
           <CardContent>
-            <Typography color="text.secondary" variant="subtitle2" gutterBottom>TOTAL P&L</Typography>
+            <Typography color="text.secondary" variant="subtitle2" gutterBottom>
+              TOTAL P&L
+            </Typography>
             <Typography variant="h5" fontWeight="bold" color={totalPnL >= 0 ? 'success.main' : 'error.main'}>
               {formatCurrency(totalPnL)}
             </Typography>
           </CardContent>
         </Card>
       </Grid>
+
       <Grid item xs={12} sm={4}>
-        <Card elevation={2}>
+        <Card elevation={2} sx={{ height: '100%' }}>
           <CardContent>
-            <Typography color="text.secondary" variant="subtitle2" gutterBottom>REALIZED P&L</Typography>
+            <Typography color="text.secondary" variant="subtitle2" gutterBottom>
+              REALIZED P&L
+            </Typography>
             <Typography variant="h5" fontWeight="bold" color={totalRealized >= 0 ? 'success.main' : 'error.main'}>
               {formatCurrency(totalRealized)}
             </Typography>
           </CardContent>
         </Card>
       </Grid>
+
       <Grid item xs={12} sm={4}>
-        <Card elevation={2}>
+        <Card elevation={2} sx={{ height: '100%' }}>
           <CardContent>
-            <Typography color="text.secondary" variant="subtitle2" gutterBottom>UNREALIZED (MTM) P&L</Typography>
+            <Typography color="text.secondary" variant="subtitle2" gutterBottom>
+              UNREALIZED (MTM) P&L
+            </Typography>
             <Typography variant="h5" fontWeight="bold" color={totalUnrealized >= 0 ? 'success.main' : 'error.main'}>
               {formatCurrency(totalUnrealized)}
             </Typography>

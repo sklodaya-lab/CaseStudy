@@ -4,7 +4,7 @@ import {
   TableHead, TableRow, Paper, Chip, Typography
 } from '@mui/material';
 
-export default function PnLTable({ data = [] }) {
+export default function PnLTable({ data = [], onRowClick }) {
   const formatNumber = (val) =>
     new Intl.NumberFormat('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(val || 0);
 
@@ -25,7 +25,12 @@ export default function PnLTable({ data = [] }) {
         </TableHead>
         <TableBody>
           {data.map((row) => (
-            <TableRow key={row.securityId} hover>
+            <TableRow
+              key={row.securityId}
+              hover
+              onClick={() => onRowClick && onRowClick(row.securityId)}
+              sx={{ cursor: 'pointer' }} // Visual hint for clickability
+            >
               <TableCell>
                 <Typography variant="body2" fontWeight="bold">{row.securityName}</Typography>
                 <Typography variant="caption" color="text.secondary">{row.securityId}</Typography>
