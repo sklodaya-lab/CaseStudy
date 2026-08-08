@@ -32,6 +32,9 @@ namespace CASE_STUDY_7_DataAccess.Reposiotires.TradeBlotteRepo
 
             var totalCount = await query.CountAsync(cancellationToken);
 
+            int pageNumber = request.PageNumber <= 0 ? 1 : request.PageNumber;
+            int pageSize = request.PageSize <= 0 ? 10 : request.PageSize;
+
             var items = await query
                 .OrderByDescending(x => x.TradeDate)
                 .ThenByDescending(x => x.TradeId)
@@ -106,10 +109,9 @@ namespace CASE_STUDY_7_DataAccess.Reposiotires.TradeBlotteRepo
             };
         }
 
-        // Shared Filter Engine
         private static IQueryable<VwTradeBlotter> ApplyFilters(
-            IQueryable<VwTradeBlotter> query,
-            TradeBlotterRequestDto request)
+    IQueryable<VwTradeBlotter> query,
+    TradeBlotterRequestDto request)
         {
             if (request.FromDate.HasValue)
             {
@@ -121,14 +123,35 @@ namespace CASE_STUDY_7_DataAccess.Reposiotires.TradeBlotteRepo
                 query = query.Where(x => x.TradeDate <= request.ToDate.Value);
             }
 
+            // Fix for SecurityIds: Split any comma-delimited strings inside the list
             if (request.SecurityIds != null && request.SecurityIds.Any())
             {
-                query = query.Where(t => request.SecurityIds.Contains(t.SecurityId));
+                var cleanSecurityIds = request.SecurityIds
+                    .SelectMany(s => s.Split(',', StringSplitOptions.RemoveEmptyEntries))
+                    .Select(s => s.Trim())
+                    .Where(s => !string.IsNullOrEmpty(s))
+                    .ToList();
+
+                if (cleanSecurityIds.Any())
+                {
+                    query = query.Where(t => cleanSecurityIds.Contains(t.SecurityId));
+                }
             }
 
+            // Fix for TraderIds: Split any comma-delimited strings and parse to INTs
             if (request.TraderIds != null && request.TraderIds.Any())
             {
-                query = query.Where(t => request.TraderIds.Contains(t.TraderId));
+                var cleanTraderIds = request.TraderIds
+                    .SelectMany(s => s.ToString().Split(',', StringSplitOptions.RemoveEmptyEntries))
+                    .Select(s => int.TryParse(s, out int val) ? (int?)val : null)
+                    .Where(v => v.HasValue)
+                    .Select(v => v!.Value)
+                    .ToList();
+
+                if (cleanTraderIds.Any())
+                {
+                    query = query.Where(t => cleanTraderIds.Contains(t.TraderId));
+                }
             }
 
             return query;

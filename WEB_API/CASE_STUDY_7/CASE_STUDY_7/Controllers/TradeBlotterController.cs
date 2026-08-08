@@ -19,33 +19,19 @@ namespace CASE_STUDY_7.Controllers
         [HttpGet]
         public async Task<IActionResult> GetTradeBlotter(
             [FromQuery] TradeBlotterRequestDto request,
-            [FromQuery] string? securityIdList,
-            [FromQuery] string? traderIdList,
             CancellationToken cancellationToken)
         {
-            request.SecurityIds = new List<string>();
-            request.TraderIds = new List<int>();
+ 
 
-            if (!string.IsNullOrWhiteSpace(securityIdList))
+            Console.WriteLine($"[DEBUG] SecurityIds count: {request?.SecurityIds?.Count ?? 0}");
+            if (request?.SecurityIds != null)
             {
-                request.SecurityIds = securityIdList
-                    .Split(',', StringSplitOptions.RemoveEmptyEntries)
-                    .Select(s => s.Trim())
-                    .Where(s => !string.IsNullOrEmpty(s))
-                    .ToList();
+                foreach (var id in request.SecurityIds)
+                {
+                    Console.WriteLine($"[DEBUG] SecurityId Value: '{id}'");
+                }
             }
 
-            // Parse comma-separated trader string ("4,5") safely into List<int>
-            if (!string.IsNullOrWhiteSpace(traderIdList))
-            {
-                request.TraderIds = traderIdList
-                    .Split(',', StringSplitOptions.RemoveEmptyEntries)
-                    .Select(s => s.Trim())
-                    .Select(s => int.TryParse(s, out int val) ? val : (int?)null)
-                    .Where(val => val.HasValue)
-                    .Select(val => val!.Value)
-                    .ToList();
-            }
 
             var result = await _repository.GetTradeBlotterAsync(request, cancellationToken);
             if (result == null)
