@@ -17,12 +17,8 @@ namespace CASE_STUDY_7.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetTradeBlotter(
-            [FromQuery] TradeBlotterRequestDto request,
-            CancellationToken cancellationToken)
+        public async Task<IActionResult> GetTradeBlotter([FromQuery] TradeBlotterRequestDto request,CancellationToken cancellationToken)
         {
- 
-
             Console.WriteLine($"[DEBUG] SecurityIds count: {request?.SecurityIds?.Count ?? 0}");
             if (request?.SecurityIds != null)
             {
@@ -43,9 +39,7 @@ namespace CASE_STUDY_7.Controllers
         }
 
         [HttpGet("analytics")]
-        public async Task<IActionResult> GetTradeBlotterAnalytics(
-                        [FromQuery] TradeBlotterRequestDto request,
-                        CancellationToken cancellationToken)
+        public async Task<IActionResult> GetTradeBlotterAnalytics([FromQuery] TradeBlotterRequestDto request,CancellationToken cancellationToken)
         {
             var analyticsData = await _repository.GetTradeBlotterAnalyticsAsync(request, cancellationToken);
             return Ok(analyticsData);
