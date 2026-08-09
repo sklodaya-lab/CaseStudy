@@ -1,27 +1,28 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { Typography, Alert, Box, Tabs, Tab } from '@mui/material';
-import TradeFilterForm from '../components/TradeFilterForm';
-import TradeTable from '../components/TradeTable';
+import DownloadIcon from '@mui/icons-material/Download'; // 👈 1. Import Download Icon
+import { Alert, Box, Button, Tab, Tabs, Typography } from '@mui/material'; // 👈 2. Import Button
+import React, { useCallback, useEffect, useState } from 'react';
 import Pagination from '../components/Pagination';
 import TradeAnalytics from '../components/TradeAnalytics';
-import { getTradeBlotter } from '../services/tradeBlotterService';
+import TradeFilterForm from '../components/TradeFilterForm';
+import TradeTable from '../components/TradeTable';
+import { exportTradeBlotterToCsv, getTradeBlotter } from '../services/tradeBlotterService';
 
-const TradeBlotterPage = () => {
-  const [activeTab, setActiveTab] = useState(0); // 0 = Blotter Table, 1 = Analytics
+const TradeBlotterPage = () => 
+  {
+  const [activeTab, setActiveTab] = useState(0); 
 
   const [trades, setTrades] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [exporting, setExporting] = useState(false);
 
-  // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [totalPages, setTotalPages] = useState(1);
   const [totalRecords, setTotalRecords] = useState(0);
 
-  // Shared Filter state
   const [activeFilters, setActiveFilters] = useState({
-    assetClasses: [], // 👈 Added assetClasses array state
+    assetClasses: [],
     securityIds: [],
     traderIds: [],
     fromDate: '',
@@ -29,7 +30,6 @@ const TradeBlotterPage = () => {
   });
 
   const fetchTrades = useCallback(async () => {
-    // Only fetch table data when the Blotter Table tab is active
     if (activeTab !== 0) return;
 
     try {
@@ -39,7 +39,7 @@ const TradeBlotterPage = () => {
       const params = {
         pageNumber: currentPage || 1,
         pageSize: pageSize || 10,
-        assetClasses: activeFilters.assetClasses || [], // 👈 Passed to service layer
+        assetClasses: activeFilters.assetClasses || [],
         securityIds: activeFilters.securityIds || [],
         traderIds: activeFilters.traderIds || [],
         fromDate: activeFilters.fromDate || null,
@@ -69,21 +69,18 @@ const TradeBlotterPage = () => {
     }
   }, [currentPage, pageSize, activeFilters, activeTab]);
 
-  // Re-fetch trades whenever page, filters, OR tab changes
   useEffect(() => {
     fetchTrades();
   }, [fetchTrades]);
 
-  // Handle live filter change (instant search)
   const handleFilterChange = (newFilters) => {
     setActiveFilters(newFilters);
-    setCurrentPage(1); // Reset back to Page 1 when filters change
+    setCurrentPage(1);
   };
 
-  // Handle filter reset
   const handleFilterReset = (resetFilters) => {
     const emptyFilters = resetFilters || {
-      assetClasses: [], // 👈 Resets asset classes to empty array
+      assetClasses: [],
       securityIds: [],
       traderIds: [],
       fromDate: '',
@@ -91,6 +88,18 @@ const TradeBlotterPage = () => {
     };
     setActiveFilters(emptyFilters);
     setCurrentPage(1);
+  };
+
+  const handleExport = async () => {
+    try {
+      setExporting(true);
+      await exportTradeBlotterToCsv(activeFilters);
+    } catch (err) {
+      console.error('Export error:', err);
+      setError('Failed to download CSV export. Please try again.');
+    } finally {
+      setExporting(false);
+    }
   };
 
   return (
@@ -114,14 +123,25 @@ const TradeBlotterPage = () => {
         </Alert>
       )}
 
-      {/* Filter Form (Triggers instant changes on both Table and Analytics) */}
+      {/* Filter Form */}
       <TradeFilterForm 
         onFilterChange={handleFilterChange} 
         onReset={handleFilterReset} 
       />
 
-      {/* Navigation Tabs */}
-      <Box sx={{ borderBottom: 1, borderColor: 'divider', mb: 3, mt: 3, width: '100%' }}>
+      {/* Navigation Tabs Bar with Export Button on the Right */}
+      <Box 
+        sx={{ 
+          display: 'flex', 
+          justify: 'space-between', 
+          alignItems: 'center', 
+          borderBottom: 1, 
+          borderColor: 'divider', 
+          mb: 3, 
+          mt: 3, 
+          width: '100%' 
+        }}
+      >
         <Tabs 
           value={activeTab} 
           onChange={(e, newValue) => setActiveTab(newValue)} 
@@ -131,6 +151,18 @@ const TradeBlotterPage = () => {
           <Tab label="Trade Blotter Table" sx={{ fontWeight: 600, textTransform: 'none' }} />
           <Tab label="Analytics & Exposure" sx={{ fontWeight: 600, textTransform: 'none' }} />
         </Tabs>
+
+        {/* 👈 Export CSV Button */}
+        <Button
+          variant="contained"
+          color="success"
+          startIcon={<DownloadIcon />}
+          onClick={handleExport}
+          disabled={exporting}
+          sx={{ fontWeight: 600, textTransform: 'none', borderRadius: 2, mb: 1 }}
+        >
+          {exporting ? 'Exporting...' : 'Export CSV'}
+        </Button>
       </Box>
 
       {/* Tab Panel 0: Table View */}

@@ -50,5 +50,14 @@ namespace CASE_STUDY_7.Controllers
             var analyticsData = await _repository.GetTradeBlotterAnalyticsAsync(request, cancellationToken);
             return Ok(analyticsData);
         }
+
+        [HttpGet("export")]
+        public async Task<IActionResult> ExportTradeBlotter([FromQuery] TradeBlotterRequestDto request,CancellationToken cancellationToken)
+        {
+            var stream = await _repository.ExportTradeBlotterToStreamAsync(request, cancellationToken);
+            var fileName = $"TradeBlotter_{DateTime.UtcNow:yyyyMMdd_HHmmss}.csv";
+
+            return File(stream, "text/csv", fileName);
+        }
     }
 }

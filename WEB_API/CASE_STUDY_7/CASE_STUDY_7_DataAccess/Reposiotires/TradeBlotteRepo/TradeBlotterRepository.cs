@@ -1,5 +1,6 @@
 ﻿using CASE_STUDY_7.DataAccess;
 using CASE_STUDY_7.Models;
+using CASE_STUDY_7_DataAccess.Services;
 using CASE_STUDY_7_Models.DTOs;
 using CASE_STUDY_7_Models.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -27,7 +28,6 @@ namespace CASE_STUDY_7_DataAccess.Reposiotires.TradeBlotteRepo
         {
             var query = _context.VwTradeBlotters.AsNoTracking().AsQueryable();
 
-            // Apply active filters using helper
             query = ApplyFilters(query, request);
 
             var totalCount = await query.CountAsync(cancellationToken);
@@ -66,35 +66,37 @@ namespace CASE_STUDY_7_DataAccess.Reposiotires.TradeBlotteRepo
         }
 
         public async Task<object> GetTradeBlotterAnalyticsAsync(
-            TradeBlotterRequestDto request,
-            CancellationToken cancellationToken = default)
+    TradeBlotterRequestDto request,
+    CancellationToken cancellationToken = default)
         {
             var query = _context.VwTradeBlotters.AsNoTracking().AsQueryable();
 
-            // Reuses exact same filter logic
             query = ApplyFilters(query, request);
 
-            // Database Aggregations via pure EF Core LINQ
-            var totalNotionalVolume = await query
-                .SumAsync(x => (decimal?)(x.Quantity * x.Price), cancellationToken) ?? 0m;
+            var summaryMetrics = await query
+                .GroupBy(x => 1)
+                .Select(g => new
+                {
+                    TotalNotionalVolume = g.Sum(x => (decimal?)(x.Quantity * x.Price)) ?? 0m,
+                    TotalTradeCount = g.Count(),
+                    BuyNotionalVolume = g.Where(x => x.BuySell.ToUpper() == "BUY")
+                                         .Sum(x => (decimal?)(x.Quantity * x.Price)) ?? 0m,
+                    SellNotionalVolume = g.Where(x => x.BuySell.ToUpper() == "SELL")
+                                          .Sum(x => (decimal?)(x.Quantity * x.Price)) ?? 0m
+                })
+                .FirstOrDefaultAsync(cancellationToken);
 
-            var totalTradeCount = await query
-                .CountAsync(cancellationToken);
-
-            var buyNotionalVolume = await query
-                .Where(x => x.BuySell.ToUpper() == "BUY")
-                .SumAsync(x => (decimal?)(x.Quantity * x.Price), cancellationToken) ?? 0m;
-
-            var sellNotionalVolume = await query
-                .Where(x => x.BuySell.ToUpper() == "SELL")
-                .SumAsync(x => (decimal?)(x.Quantity * x.Price), cancellationToken) ?? 0m;
+            var totalNotionalVolume = summaryMetrics?.TotalNotionalVolume ?? 0m;
+            var totalTradeCount = summaryMetrics?.TotalTradeCount ?? 0;
+            var buyNotionalVolume = summaryMetrics?.BuyNotionalVolume ?? 0m;
+            var sellNotionalVolume = summaryMetrics?.SellNotionalVolume ?? 0m;
 
             var traderBreakdown = await query
                 .GroupBy(x => x.TraderName)
                 .Select(g => new
                 {
-                    TraderName = g.Key,
-                    TotalVolume = g.Sum(x => x.Quantity * x.Price)
+                    TraderName = string.IsNullOrEmpty(g.Key) ? "Unknown" : g.Key,
+                    TotalVolume = g.Sum(x => (decimal?)(x.Quantity * x.Price)) ?? 0m
                 })
                 .OrderByDescending(x => x.TotalVolume)
                 .ToListAsync(cancellationToken);
@@ -103,8 +105,8 @@ namespace CASE_STUDY_7_DataAccess.Reposiotires.TradeBlotteRepo
                 .GroupBy(x => x.AssetClass)
                 .Select(g => new
                 {
-                    AssetClass = g.Key ?? "Unassigned",
-                    TotalVolume = g.Sum(x => x.Quantity * x.Price)
+                    AssetClass = string.IsNullOrEmpty(g.Key) ? "Unassigned" : g.Key,
+                    TotalVolume = g.Sum(x => (decimal?)(x.Quantity * x.Price)) ?? 0m
                 })
                 .OrderByDescending(x => x.TotalVolume)
                 .ToListAsync(cancellationToken);
@@ -120,9 +122,7 @@ namespace CASE_STUDY_7_DataAccess.Reposiotires.TradeBlotteRepo
             };
         }
 
-        private static IQueryable<VwTradeBlotter> ApplyFilters(
-    IQueryable<VwTradeBlotter> query,
-    TradeBlotterRequestDto request)
+        private static IQueryable<VwTradeBlotter> ApplyFilters(IQueryable<VwTradeBlotter> query,TradeBlotterRequestDto request)
         {
             if (request.FromDate.HasValue)
             {
@@ -178,5 +178,24 @@ namespace CASE_STUDY_7_DataAccess.Reposiotires.TradeBlotteRepo
             }
             return query;
         }
+
+        public async Task<Stream> ExportTradeBlotterToStreamAsync(TradeBlotterRequestDto request, CancellationToken cancellationToken = default)
+        {
+            var query = _context.VwTradeBlotters.AsNoTracking().AsQueryable();
+
+            query = ApplyFilters(query, request);
+
+            var items = await query
+                .OrderByDescending(x => x.TradeDate)
+                .ThenByDescending(x=>x.TradeId)
+                .ToListAsync(cancellationToken);
+
+            string headers = "Trade ID,Trade Date,Asset Class,Security,Trader,Side,Quantity,Price,Gross Notional";
+
+            return CsvExportService.BuildCsvStream(headers, items, x =>
+                $"\"{x.TradeId}\",\"{x.TradeDate:yyyy-MM-dd}\",\"{x.AssetClass ?? "-"}\",\"{x.SecurityName ?? x.SecurityId}\",\"{x.TraderName ?? x.TraderId.ToString()}\",\"{x.BuySell}\",{x.Quantity},{x.Price:F2},{(x.GrossNotionalAmount ?? (x.Quantity * x.Price)):F2}"
+            );
+        }
+
     }
 }

@@ -15,7 +15,6 @@ import {
 import RestartAltIcon from '@mui/icons-material/RestartAlt';
 import { getSecurities, getTraders } from '../services/tradeBlotterService';
 
-// Custom MenuProps to ensure a smooth, max-height dropdown that slides down cleanly
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
 const MenuProps = {
@@ -40,7 +39,6 @@ export default function TradeFilterForm({ onFilterChange, onReset }) {
   const [fromDate, setFromDate] = useState('');
   const [toDate, setToDate] = useState('');
 
-  // Fetch metadata dropdowns on mount
   useEffect(() => {
     const loadDropdownData = async () => {
       try {
@@ -50,7 +48,6 @@ export default function TradeFilterForm({ onFilterChange, onReset }) {
         setSecurities(secs);
         setTraders(traderData || []);
 
-        // Extract distinct, non-empty Asset Classes from the securities metadata
         const uniqueAssetClasses = [
           ...new Set(
             secs
@@ -67,7 +64,6 @@ export default function TradeFilterForm({ onFilterChange, onReset }) {
     loadDropdownData();
   }, []);
 
-  // Cascading Dependent Filter: Compute available securities based on selected assetClasses
   const filteredSecurities = useMemo(() => {
     if (!assetClasses || assetClasses.length === 0) {
       return securities; // Show all if no Asset Class filter is active
@@ -75,13 +71,11 @@ export default function TradeFilterForm({ onFilterChange, onReset }) {
     return securities.filter((sec) => assetClasses.includes(sec.assetClass));
   }, [securities, assetClasses]);
 
-  // Multi-select change handler for Asset Classes with auto-cleanup for invalid securities
   const handleAssetClassChange = (event) => {
     const { value } = event.target;
     const selectedAssetClasses = typeof value === 'string' ? value.split(',') : value;
     setAssetClasses(selectedAssetClasses);
 
-    // Auto-prune any selected security that isn't part of the active asset classes
     const validSecurityIds = securityIds.filter((secId) => {
       const sec = securities.find((s) => s.securityId === secId);
       return (
@@ -102,7 +96,6 @@ export default function TradeFilterForm({ onFilterChange, onReset }) {
     });
   };
 
-  // Multi-select change handler for Securities
   const handleSecurityChange = (event) => {
     const { value } = event.target;
     const selected = typeof value === 'string' ? value.split(',') : value;
@@ -117,7 +110,6 @@ export default function TradeFilterForm({ onFilterChange, onReset }) {
     });
   };
 
-  // Multi-select change handler for Traders
   const handleTraderChange = (event) => {
     const { value } = event.target;
     const rawArray = typeof value === 'string' ? value.split(',') : value;
@@ -133,7 +125,6 @@ export default function TradeFilterForm({ onFilterChange, onReset }) {
     });
   };
 
-  // Date handlers
   const handleFromDateChange = (e) => {
     const val = e.target.value;
     setFromDate(val);
@@ -178,7 +169,6 @@ export default function TradeFilterForm({ onFilterChange, onReset }) {
 
       <Box display="flex" gap={2} alignItems="center" flexWrap="wrap">
         
-        {/* Asset Class Multi-Select Dropdown */}
         <FormControl sx={{ minWidth: 200, flex: 1 }}>
           <InputLabel id="asset-class-label">Asset Classes</InputLabel>
           <Select
@@ -211,7 +201,6 @@ export default function TradeFilterForm({ onFilterChange, onReset }) {
           </Select>
         </FormControl>
 
-        {/* Securities Multi-Select Dropdown (Renders filteredSecurities) */}
         <FormControl sx={{ minWidth: 220, flex: 1 }}>
           <InputLabel id="security-label">Securities</InputLabel>
           <Select
@@ -247,7 +236,6 @@ export default function TradeFilterForm({ onFilterChange, onReset }) {
           </Select>
         </FormControl>
 
-        {/* Traders Multi-Select Dropdown */}
         <FormControl sx={{ minWidth: 220, flex: 1 }}>
           <InputLabel id="trader-label">Traders</InputLabel>
           <Select
@@ -283,7 +271,6 @@ export default function TradeFilterForm({ onFilterChange, onReset }) {
           </Select>
         </FormControl>
 
-        {/* From Date */}
         <TextField
           label="From Date"
           type="date"
@@ -293,7 +280,6 @@ export default function TradeFilterForm({ onFilterChange, onReset }) {
           sx={{ width: 150 }}
         />
 
-        {/* To Date */}
         <TextField
           label="To Date"
           type="date"
@@ -303,7 +289,6 @@ export default function TradeFilterForm({ onFilterChange, onReset }) {
           sx={{ width: 150 }}
         />
 
-        {/* Reset Button */}
         <Button
           variant="outlined"
           startIcon={<RestartAltIcon />}

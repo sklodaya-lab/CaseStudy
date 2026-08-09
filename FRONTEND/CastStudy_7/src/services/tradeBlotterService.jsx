@@ -1,91 +1,54 @@
 import axios from 'axios';
+import { downloadStreamFile } from '../utils/downloadFile';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
-export const getTradeBlotter = async (filters) => {
+const buildQueryParams = (filters = {}) => {
+  const params = new URLSearchParams();
+
+  if (filters?.fromDate) params.append('fromDate', filters.fromDate);
+  if (filters?.toDate) params.append('toDate', filters.toDate);
+
+  const appendArrayFilter = (paramName, items) => {
+    if (Array.isArray(items) && items.length > 0) {
+      items.forEach((item) => {
+        if (item !== null && item !== undefined && item.toString().trim() !== '') {
+          params.append(paramName, item.toString().trim());
+        }
+      });
+    }
+  };
+
+  appendArrayFilter('AssetClasses', filters?.assetClasses);
+  appendArrayFilter('SecurityIds', filters?.securityIds);
+  appendArrayFilter('TraderIds', filters?.traderIds);
+
+  return params;
+};
+
+export const getTradeBlotter = async (filters = {}) => {
   try {
-    const params = new URLSearchParams();
+    const params = buildQueryParams(filters);
 
-    // Pagination
-    params.append('pageNumber', filters.pageNumber || 1);
-    params.append('pageSize', filters.pageSize || 10);
-
-    // Dates
-    if (filters.fromDate) params.append('fromDate', filters.fromDate);
-    if (filters.toDate) params.append('toDate', filters.toDate);
-
-    // Asset Classes
-    if (Array.isArray(filters.assetClasses) && filters.assetClasses.length > 0) {
-      filters.assetClasses.forEach((ac) => {
-        if (ac && ac.toString().trim() !== '') {
-          params.append('AssetClasses', ac.toString().trim());
-        }
-      });
-    }
-
-    // Security IDs
-    if (Array.isArray(filters.securityIds) && filters.securityIds.length > 0) {
-      filters.securityIds.forEach((id) => {
-        if (id && id.toString().trim() !== '') {
-          params.append('SecurityIds', id.toString().trim());
-        }
-      });
-    }
-
-    // Trader IDs
-    if (Array.isArray(filters.traderIds) && filters.traderIds.length > 0) {
-      filters.traderIds.forEach((id) => {
-        if (id !== null && id !== undefined && id !== '') {
-          params.append('TraderIds', id);
-        }
-      });
-    }
+    params.append('pageNumber', filters?.pageNumber || 1);
+    params.append('pageSize', filters?.pageSize || 10);
 
     const response = await axios.get(`${API_BASE_URL}/TradeBlotter`, { params });
     return response.data;
   } catch (error) {
-    console.error('Error in getTradeBlotter:', error);
+    console.error('Error fetching Trade Blotter:', error);
     throw error;
   }
 };
 
-export const getTradeBlotterAnalytics = async (filters) => {
+export const getTradeBlotterAnalytics = async (filters = {}) => {
   try {
-    const params = new URLSearchParams();
-
-    // Dates
-    if (filters.fromDate) params.append('fromDate', filters.fromDate);
-    if (filters.toDate) params.append('toDate', filters.toDate);
-
-    // Asset Classes
-    if (Array.isArray(filters.assetClasses) && filters.assetClasses.length > 0) {
-      filters.assetClasses.forEach((ac) => {
-        if (ac && ac.toString().trim() !== '') {
-          params.append('AssetClasses', ac.toString().trim());
-        }
-      });
-    }
-
-    // Security IDs
-    if (Array.isArray(filters.securityIds) && filters.securityIds.length > 0) {
-      filters.securityIds.forEach((id) => {
-        if (id) params.append('SecurityIds', id);
-      });
-    }
-
-    // Trader IDs
-    if (Array.isArray(filters.traderIds) && filters.traderIds.length > 0) {
-      filters.traderIds.forEach((id) => {
-        if (id !== null && id !== undefined && id !== '') {
-          params.append('TraderIds', id);
-        }
-      });
-    }
-
+    const params = buildQueryParams(filters);
     const response = await axios.get(`${API_BASE_URL}/TradeBlotter/analytics`, { params });
     return response.data;
-  } catch (error) {
-    console.error('Error in getTradeBlotterAnalytics:', error);
+  } 
+  catch (error) {
+    console.error('Error fetching Trade Blotter Analytics:', error);
     throw error;
   }
 };
@@ -94,8 +57,9 @@ export const getSecurities = async () => {
   try {
     const response = await axios.get(`${API_BASE_URL}/Security`);
     return response.data;
-  } catch (error) {
-    console.error('Error in getSecurities:', error);
+  } 
+  catch (error) {
+    console.error('Error fetching Securities lookup:', error);
     throw error;
   }
 };
@@ -104,8 +68,22 @@ export const getTraders = async () => {
   try {
     const response = await axios.get(`${API_BASE_URL}/Trader`);
     return response.data;
+  } 
+  catch (error) {
+    console.error('Error fetching Traders lookup:', error);
+    throw error;
+  }
+};
+
+export const exportTradeBlotterToCsv = async (filters = {}) => {
+  try {
+    const params = buildQueryParams(filters);
+    const fileName = `TradeBlotter_${new Date().toISOString().slice(0, 10)}.csv`;
+
+    const exportUrl = `${API_BASE_URL}/TradeBlotter/export`;
+    await downloadStreamFile(exportUrl, params, fileName);
   } catch (error) {
-    console.error('Error in getTraders:', error);
+    console.error('Error exporting Trade Blotter CSV:', error);
     throw error;
   }
 };
