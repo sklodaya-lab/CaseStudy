@@ -46,6 +46,7 @@ namespace CASE_STUDY_7_DataAccess.Reposiotires.TradeBlotteRepo
                     TradeDate = x.TradeDate,
                     SecurityId = x.SecurityId,
                     SecurityName = x.SecurityName,
+                    AssetClass = x.AssetClass,
                     TraderId = x.TraderId,
                     TraderName = x.TraderName,
                     BuySell = x.BuySell,
@@ -98,13 +99,23 @@ namespace CASE_STUDY_7_DataAccess.Reposiotires.TradeBlotteRepo
                 .OrderByDescending(x => x.TotalVolume)
                 .ToListAsync(cancellationToken);
 
-            // Returns anonymous object directly (No new DTO required)
+            var assetClassBreakdown = await query
+                .GroupBy(x => x.AssetClass)
+                .Select(g => new
+                {
+                    AssetClass = g.Key ?? "Unassigned",
+                    TotalVolume = g.Sum(x => x.Quantity * x.Price)
+                })
+                .OrderByDescending(x => x.TotalVolume)
+                .ToListAsync(cancellationToken);
+
             return new
             {
                 TotalNotionalVolume = totalNotionalVolume,
                 TotalTradeCount = totalTradeCount,
                 BuyNotionalVolume = buyNotionalVolume,
                 SellNotionalVolume = sellNotionalVolume,
+                AssetClassBreakdown = assetClassBreakdown,
                 TraderBreakdown = traderBreakdown
             };
         }
@@ -123,7 +134,6 @@ namespace CASE_STUDY_7_DataAccess.Reposiotires.TradeBlotteRepo
                 query = query.Where(x => x.TradeDate <= request.ToDate.Value);
             }
 
-            // Fix for SecurityIds: Split any comma-delimited strings inside the list
             if (request.SecurityIds != null && request.SecurityIds.Any())
             {
                 var cleanSecurityIds = request.SecurityIds
@@ -138,7 +148,6 @@ namespace CASE_STUDY_7_DataAccess.Reposiotires.TradeBlotteRepo
                 }
             }
 
-            // Fix for TraderIds: Split any comma-delimited strings and parse to INTs
             if (request.TraderIds != null && request.TraderIds.Any())
             {
                 var cleanTraderIds = request.TraderIds
@@ -154,6 +163,19 @@ namespace CASE_STUDY_7_DataAccess.Reposiotires.TradeBlotteRepo
                 }
             }
 
+            if (request.AssetClasses != null && request.AssetClasses.Any())
+            {
+                var cleanAssetClasses = request.AssetClasses
+                    .SelectMany(s => s.Split(',', StringSplitOptions.RemoveEmptyEntries))
+                    .Select(s => s.Trim())
+                    .Where(s => !string.IsNullOrEmpty(s))
+                    .ToList();
+
+                if (cleanAssetClasses.Any())
+                {
+                    query = query.Where(t => cleanAssetClasses.Contains(t.AssetClass));
+                }
+            }
             return query;
         }
     }

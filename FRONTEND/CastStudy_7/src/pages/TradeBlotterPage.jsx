@@ -21,6 +21,7 @@ const TradeBlotterPage = () => {
 
   // Shared Filter state
   const [activeFilters, setActiveFilters] = useState({
+    assetClasses: [], // 👈 Added assetClasses array state
     securityIds: [],
     traderIds: [],
     fromDate: '',
@@ -38,6 +39,7 @@ const TradeBlotterPage = () => {
       const params = {
         pageNumber: currentPage || 1,
         pageSize: pageSize || 10,
+        assetClasses: activeFilters.assetClasses || [], // 👈 Passed to service layer
         securityIds: activeFilters.securityIds || [],
         traderIds: activeFilters.traderIds || [],
         fromDate: activeFilters.fromDate || null,
@@ -81,6 +83,7 @@ const TradeBlotterPage = () => {
   // Handle filter reset
   const handleFilterReset = (resetFilters) => {
     const emptyFilters = resetFilters || {
+      assetClasses: [], // 👈 Resets asset classes to empty array
       securityIds: [],
       traderIds: [],
       fromDate: '',

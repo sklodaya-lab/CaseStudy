@@ -13,6 +13,7 @@ namespace CASE_STUDY_7_Models.DTOs
 
 
         public List<string>? SecurityIds { get; set; }
+        public List<string>? AssetClasses { get; set; }
         public List<int>? TraderIds { get; set; } 
 
         private int pageNumber = 1;

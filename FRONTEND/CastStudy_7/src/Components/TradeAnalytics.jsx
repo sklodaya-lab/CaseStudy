@@ -81,19 +81,31 @@ const TradeAnalytics = ({ filters }) => {
     { id: 1, value: sellVolume, label: 'Sell Volume', color: '#c62828' }
   ];
 
-  const rawBreakdown = analytics.traderBreakdown || analytics.TraderBreakdown || [];
-  const sortedBreakdown = [...rawBreakdown].sort((a, b) => {
+  // Trader Breakdown
+  const rawTraderBreakdown = analytics.traderBreakdown || analytics.TraderBreakdown || [];
+  const sortedTraderBreakdown = [...rawTraderBreakdown].sort((a, b) => {
     const volA = Number(a.totalVolume ?? a.TotalVolume ?? 0);
     const volB = Number(b.totalVolume ?? b.TotalVolume ?? 0);
     return volB - volA;
   });
 
-  const traderNames = sortedBreakdown.map((item) => String(item.traderName ?? item.TraderName ?? 'Unknown'));
-  const traderVolumes = sortedBreakdown.map((item) => Number(item.totalVolume ?? item.TotalVolume ?? 0));
+  const traderNames = sortedTraderBreakdown.map((item) => String(item.traderName ?? item.TraderName ?? 'Unknown'));
+  const traderVolumes = sortedTraderBreakdown.map((item) => Number(item.totalVolume ?? item.TotalVolume ?? 0));
+
+  // Asset Class Breakdown (Added parsing)
+  const rawAssetClassBreakdown = analytics.assetClassBreakdown || analytics.AssetClassBreakdown || [];
+  const sortedAssetClassBreakdown = [...rawAssetClassBreakdown].sort((a, b) => {
+    const volA = Number(a.totalVolume ?? a.TotalVolume ?? 0);
+    const volB = Number(b.totalVolume ?? b.TotalVolume ?? 0);
+    return volB - volA;
+  });
+
+  const assetClassNames = sortedAssetClassBreakdown.map((item) => String(item.assetClass ?? item.AssetClass ?? 'Unassigned'));
+  const assetClassVolumes = sortedAssetClassBreakdown.map((item) => Number(item.totalVolume ?? item.TotalVolume ?? 0));
 
   return (
     <Box sx={{ width: '100%', boxSizing: 'border-box' }}>
-      {/* SECTION 1: TOP KPI METRIC CARDS (Flexbox Row) */}
+      {/* SECTION 1: TOP KPI METRIC CARDS */}
       <Box sx={{ display: 'flex', gap: 2.5, mb: 3, flexWrap: 'wrap', width: '100%' }}>
         {/* Total Market Exposure */}
         <Paper sx={{ flex: '1 1 220px', p: 2.5, borderRadius: 3, boxShadow: '0 2px 10px rgba(0,0,0,0.04)', borderLeft: '5px solid #1976d2' }}>
@@ -170,10 +182,10 @@ const TradeAnalytics = ({ filters }) => {
         </Paper>
       </Box>
 
-      {/* SECTION 2: FULL WIDTH CHARTS (Flexbox Row) */}
-      <Box sx={{ display: 'flex', gap: 3, flexWrap: { xs: 'wrap', md: 'nowrap' }, width: '100%' }}>
+      {/* SECTION 2: CHARTS GRID */}
+      <Box sx={{ display: 'flex', gap: 3, flexWrap: 'wrap', width: '100%' }}>
         {/* Donut Chart Box */}
-        <Paper sx={{ flex: '1 1 40%', p: 3, borderRadius: 3, boxShadow: '0 2px 10px rgba(0,0,0,0.04)', minWidth: 300 }}>
+        <Paper sx={{ flex: '1 1 300px', p: 3, borderRadius: 3, boxShadow: '0 2px 10px rgba(0,0,0,0.04)' }}>
           <Typography variant="h6" sx={{ fontWeight: 700, color: '#1e293b' }}>
             Exposure Split (Buy vs Sell)
           </Typography>
@@ -198,8 +210,46 @@ const TradeAnalytics = ({ filters }) => {
           </Box>
         </Paper>
 
-        {/* Bar Chart Box */}
-        <Paper sx={{ flex: '1 1 60%', p: 3, borderRadius: 3, boxShadow: '0 2px 10px rgba(0,0,0,0.04)', minWidth: 320 }}>
+        {/* Asset Class Volume Chart Box (NEW) */}
+        {assetClassNames.length > 0 && (
+          <Paper sx={{ flex: '1 1 320px', p: 3, borderRadius: 3, boxShadow: '0 2px 10px rgba(0,0,0,0.04)' }}>
+            <Typography variant="h6" sx={{ fontWeight: 700, color: '#1e293b' }}>
+              Asset Class Breakdown
+            </Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+              Total volume by asset class
+            </Typography>
+
+            <Box sx={{ width: '100%', height: 300 }}>
+              <BarChart
+                xAxis={[
+                  {
+                    scaleType: 'band',
+                    data: assetClassNames,
+                  },
+                ]}
+                yAxis={[
+                  {
+                    scaleType: 'linear',
+                    valueFormatter: (v) => formatCompact(v),
+                  },
+                ]}
+                series={[
+                  {
+                    data: assetClassVolumes,
+                    color: '#0284c7',
+                    label: 'Notional Volume',
+                    valueFormatter: (v) => formatNumber(v),
+                  },
+                ]}
+                height={280}
+              />
+            </Box>
+          </Paper>
+        )}
+
+        {/* Trader Bar Chart Box */}
+        <Paper sx={{ flex: '1 1 320px', p: 3, borderRadius: 3, boxShadow: '0 2px 10px rgba(0,0,0,0.04)' }}>
           <Typography variant="h6" sx={{ fontWeight: 700, color: '#1e293b' }}>
             Trader Volume Leaderboard
           </Typography>

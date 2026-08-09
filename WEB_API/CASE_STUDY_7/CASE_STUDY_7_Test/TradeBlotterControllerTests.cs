@@ -30,7 +30,7 @@ namespace CASE_STUDY_7_Test
             {
                 PageNumber = 1,
                 PageSize = 10,
-                SecurityId = "EQ04"
+                SecurityIds = ["EQ04"]
             };
 
             var expectedResult = new TradeBlotterPagedResultDto
@@ -76,7 +76,7 @@ namespace CASE_STUDY_7_Test
         public async Task GetTradeBlotter_NoMatches_ReturnsOkWithEmptyItems()
         {
             // Arrange
-            var requestDto = new TradeBlotterRequestDto { SecurityId = "NON_EXISTENT" };
+            var requestDto = new TradeBlotterRequestDto { SecurityIds = [""] };
             var emptyResult = new TradeBlotterPagedResultDto
             {
                 TotalRecords = 0,

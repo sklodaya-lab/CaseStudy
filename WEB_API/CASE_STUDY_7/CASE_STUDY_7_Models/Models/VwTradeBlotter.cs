@@ -19,6 +19,7 @@ public partial class VwTradeBlotter
 
     public int TraderId { get; set; }
 
+    public string? AssetClass { get; set; }
     public string TraderName { get; set; } = null!;
 
     public string SecurityName { get; set; } = null!;

@@ -14,7 +14,16 @@ export const getTradeBlotter = async (filters) => {
     if (filters.fromDate) params.append('fromDate', filters.fromDate);
     if (filters.toDate) params.append('toDate', filters.toDate);
 
-    // Append array items individually so ASP.NET Core binds List<string> natively
+    // Asset Classes
+    if (Array.isArray(filters.assetClasses) && filters.assetClasses.length > 0) {
+      filters.assetClasses.forEach((ac) => {
+        if (ac && ac.toString().trim() !== '') {
+          params.append('AssetClasses', ac.toString().trim());
+        }
+      });
+    }
+
+    // Security IDs
     if (Array.isArray(filters.securityIds) && filters.securityIds.length > 0) {
       filters.securityIds.forEach((id) => {
         if (id && id.toString().trim() !== '') {
@@ -22,6 +31,8 @@ export const getTradeBlotter = async (filters) => {
         }
       });
     }
+
+    // Trader IDs
     if (Array.isArray(filters.traderIds) && filters.traderIds.length > 0) {
       filters.traderIds.forEach((id) => {
         if (id !== null && id !== undefined && id !== '') {
@@ -46,17 +57,27 @@ export const getTradeBlotterAnalytics = async (filters) => {
     if (filters.fromDate) params.append('fromDate', filters.fromDate);
     if (filters.toDate) params.append('toDate', filters.toDate);
 
-    // Append array items individually
-    if (Array.isArray(filters.securityIds) && filters.securityIds.length > 0) {
-      filters.securityIds.forEach((id) => {
-        if (id) params.append('securityIds', id);
+    // Asset Classes
+    if (Array.isArray(filters.assetClasses) && filters.assetClasses.length > 0) {
+      filters.assetClasses.forEach((ac) => {
+        if (ac && ac.toString().trim() !== '') {
+          params.append('AssetClasses', ac.toString().trim());
+        }
       });
     }
 
+    // Security IDs
+    if (Array.isArray(filters.securityIds) && filters.securityIds.length > 0) {
+      filters.securityIds.forEach((id) => {
+        if (id) params.append('SecurityIds', id);
+      });
+    }
+
+    // Trader IDs
     if (Array.isArray(filters.traderIds) && filters.traderIds.length > 0) {
       filters.traderIds.forEach((id) => {
         if (id !== null && id !== undefined && id !== '') {
-          params.append('traderIds', id);
+          params.append('TraderIds', id);
         }
       });
     }

@@ -8,7 +8,6 @@ import {
   TableRow,
   Paper,
   Chip,
-  Box,
   Typography,
   CircularProgress
 } from '@mui/material';
@@ -41,6 +40,7 @@ const TradeTable = ({ trades = [], loading = false }) => {
         <TableHead sx={{ backgroundColor: (theme) => theme.palette.grey[100] }}>
           <TableRow>
             <TableCell sx={{ fontWeight: 700 }}>TRADE ID</TableCell>
+            <TableCell sx={{ fontWeight: 700 }}>ASSET CLASS</TableCell>{/* 👈 Added Header */}
             <TableCell sx={{ fontWeight: 700 }}>SECURITY</TableCell>
             <TableCell sx={{ fontWeight: 700 }}>TRADER</TableCell>
             <TableCell align="center" sx={{ fontWeight: 700 }}>SIDE</TableCell>
@@ -55,9 +55,30 @@ const TradeTable = ({ trades = [], loading = false }) => {
             const side = String(rawSide).toUpperCase();
             const isBuy = side === 'BUY' || side === 'B';
 
+            // Resolve Asset Class property (handles both camelCase and PascalCase DTO output)
+            const assetClass = t.assetClass || t.AssetClass || '-';
+
             return (
               <TableRow key={t.tradeId || t.id} hover>
                 <TableCell>#{t.tradeId || t.id}</TableCell>
+
+                {/* Asset Class Chip Column */}
+                <TableCell>
+                  <Chip
+                    label={assetClass}
+                    size="small"
+                    variant="outlined"
+                    sx={{
+                      fontWeight: 600,
+                      fontSize: '0.72rem',
+                      height: 22,
+                      borderColor: '#cbd5e1',
+                      color: '#334155',
+                      backgroundColor: '#f8fafc',
+                    }}
+                  />
+                </TableCell>
+
                 <TableCell sx={{ fontWeight: 600 }}>
                   {t.securityName || t.securityId || '-'}
                 </TableCell>
@@ -69,7 +90,6 @@ const TradeTable = ({ trades = [], loading = false }) => {
                     label={isBuy ? 'BUY' : 'SELL'}
                     color={isBuy ? 'success' : 'error'}
                     size="small"
-                    variant="soft"
                     sx={{
                       fontWeight: 700,
                       minWidth: 60,
