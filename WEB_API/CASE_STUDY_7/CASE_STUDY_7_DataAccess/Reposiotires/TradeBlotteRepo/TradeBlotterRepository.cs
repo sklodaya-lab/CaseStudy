@@ -32,12 +32,21 @@ namespace CASE_STUDY_7_DataAccess.Reposiotires.TradeBlotteRepo
 
             var totalCount = await query.CountAsync(cancellationToken);
 
+            if (request.IsDescending)
+            {
+                query = query.OrderByDescending(x => x.TradeDate)
+                             .ThenByDescending(x => x.TradeId);
+            }
+            else
+            {
+                query = query.OrderBy(x => x.TradeDate)
+                             .ThenBy(x => x.TradeId);
+            }
+
             int pageNumber = request.PageNumber <= 0 ? 1 : request.PageNumber;
             int pageSize = request.PageSize <= 0 ? 10 : request.PageSize;
 
             var items = await query
-                .OrderByDescending(x => x.TradeDate)
-                .ThenByDescending(x => x.TradeId)
                 .Skip((request.PageNumber - 1) * request.PageSize)
                 .Take(request.PageSize)
                 .Select(x => new TradeBlotterItemDto

@@ -12,7 +12,7 @@ import {
   CircularProgress
 } from '@mui/material';
 
-const TradeTable = ({ trades = [], loading = false }) => {
+const TradeTable = ({ trades = [], loading = false,isDescending = true, onToggleSort}) => {
   if (loading) {
     return (
       <Paper elevation={1} sx={{ p: 5, textAlign: 'center' }}>
@@ -40,13 +40,14 @@ const TradeTable = ({ trades = [], loading = false }) => {
         <TableHead sx={{ backgroundColor: (theme) => theme.palette.grey[100] }}>
           <TableRow>
             <TableCell sx={{ fontWeight: 700 }}>TRADE ID</TableCell>
-            <TableCell sx={{ fontWeight: 700 }}>ASSET CLASS</TableCell>{/* 👈 Added Header */}
+            <TableCell sx={{ fontWeight: 700 }}>ASSET CLASS</TableCell>
             <TableCell sx={{ fontWeight: 700 }}>SECURITY</TableCell>
             <TableCell sx={{ fontWeight: 700 }}>TRADER</TableCell>
             <TableCell align="center" sx={{ fontWeight: 700 }}>SIDE</TableCell>
             <TableCell align="right" sx={{ fontWeight: 700 }}>QUANTITY</TableCell>
             <TableCell align="right" sx={{ fontWeight: 700 }}>PRICE</TableCell>
-            <TableCell sx={{ fontWeight: 700 }}>TRADE DATE</TableCell>
+            <TableCell sx={{ fontWeight: 700 }} onClick={onToggleSort} 
+              sx={{ cursor: 'pointer', userSelect: 'none', fontWeight: 'bold' }}>TRADE DATE {isDescending ? '⬇️' : '⬆️'}</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>

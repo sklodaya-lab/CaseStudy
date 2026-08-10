@@ -32,6 +32,7 @@ export const getTradeBlotter = async (filters = {}) => {
 
     params.append('pageNumber', filters?.pageNumber || 1);
     params.append('pageSize', filters?.pageSize || 10);
+    params.append('isDescending', filters?.isDescending ?? true);
 
     const response = await axios.get(`${API_BASE_URL}/TradeBlotter`, { params });
     return response.data;
