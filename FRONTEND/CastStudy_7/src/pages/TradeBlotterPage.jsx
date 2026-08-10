@@ -20,6 +20,7 @@ const TradeBlotterPage = () =>
   const [pageSize, setPageSize] = useState(10);
   const [totalPages, setTotalPages] = useState(1);
   const [totalRecords, setTotalRecords] = useState(0);
+  const [isDescending, setIsDescending] = useState(true);
 
   const [activeFilters, setActiveFilters] = useState({
     assetClasses: [],
@@ -39,6 +40,7 @@ const TradeBlotterPage = () =>
       const params = {
         pageNumber: currentPage || 1,
         pageSize: pageSize || 10,
+        isDescending: isDescending,
         assetClasses: activeFilters.assetClasses || [],
         securityIds: activeFilters.securityIds || [],
         traderIds: activeFilters.traderIds || [],
@@ -67,7 +69,7 @@ const TradeBlotterPage = () =>
     } finally {
       setLoading(false);
     }
-  }, [currentPage, pageSize, activeFilters, activeTab]);
+  }, [currentPage, pageSize,isDescending, activeFilters, activeTab]);
 
   useEffect(() => {
     fetchTrades();
@@ -152,7 +154,6 @@ const TradeBlotterPage = () =>
           <Tab label="Analytics & Exposure" sx={{ fontWeight: 600, textTransform: 'none' }} />
         </Tabs>
 
-        {/* 👈 Export CSV Button */}
         <Button
           variant="contained"
           color="success"
@@ -168,7 +169,7 @@ const TradeBlotterPage = () =>
       {/* Tab Panel 0: Table View */}
       {activeTab === 0 && (
         <Box sx={{ width: '100%' }}>
-          <TradeTable trades={trades} loading={loading} />
+          <TradeTable trades={trades} loading={loading} isDescending={isDescending} onToggleSort={() => setIsDescending(prev => !prev)} />
           <Pagination
             currentPage={currentPage}
             totalPages={totalPages}

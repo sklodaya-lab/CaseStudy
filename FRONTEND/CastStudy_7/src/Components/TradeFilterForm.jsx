@@ -28,16 +28,21 @@ const MenuProps = {
   },
 };
 
+const INITIAL_FILTERS = {
+  assetClasses: [],
+  securityIds: [],
+  traderIds: [],
+  fromDate: '',
+  toDate: '',
+};
+
 export default function TradeFilterForm({ onFilterChange, onReset }) {
   const [securities, setSecurities] = useState([]);
   const [traders, setTraders] = useState([]);
   const [assetClassOptions, setAssetClassOptions] = useState([]);
 
-  const [assetClasses, setAssetClasses] = useState([]);
-  const [securityIds, setSecurityIds] = useState([]);
-  const [traderIds, setTraderIds] = useState([]);
-  const [fromDate, setFromDate] = useState('');
-  const [toDate, setToDate] = useState('');
+  // 1. Single consolidated local state
+  const [filters, setFilters] = useState(INITIAL_FILTERS);
 
   useEffect(() => {
     const loadDropdownData = async () => {
@@ -65,92 +70,36 @@ export default function TradeFilterForm({ onFilterChange, onReset }) {
   }, []);
 
   const filteredSecurities = useMemo(() => {
-    if (!assetClasses || assetClasses.length === 0) {
-      return securities; // Show all if no Asset Class filter is active
+    if (!filters.assetClasses || filters.assetClasses.length === 0) {
+      return securities;
     }
-    return securities.filter((sec) => assetClasses.includes(sec.assetClass));
-  }, [securities, assetClasses]);
+    return securities.filter((sec) => filters.assetClasses.includes(sec.assetClass));
+  }, [securities, filters.assetClasses]);
 
-  const handleAssetClassChange = (event) => {
-    const { value } = event.target;
-    const selectedAssetClasses = typeof value === 'string' ? value.split(',') : value;
-    setAssetClasses(selectedAssetClasses);
+  // 2. ONE generic handler for updating local state
+  const handleChange = (field) => (event) => {
+    let value = event.target.value;
 
-    const validSecurityIds = securityIds.filter((secId) => {
-      const sec = securities.find((s) => s.securityId === secId);
-      return (
-        !sec ||
-        selectedAssetClasses.length === 0 ||
-        selectedAssetClasses.includes(sec.assetClass)
-      );
-    });
+    if (field === 'traderIds') {
+      const rawArray = typeof value === 'string' ? value.split(',') : value;
+      value = rawArray.map((v) => Number(v)).filter((v) => !isNaN(v));
+    }
 
-    setSecurityIds(validSecurityIds);
-
-    onFilterChange({
-      assetClasses: selectedAssetClasses,
-      securityIds: validSecurityIds,
-      traderIds,
-      fromDate,
-      toDate,
-    });
+    setFilters((prev) => ({
+      ...prev,
+      [field]: typeof value === 'string' ? value.split(',') : value,
+    }));
   };
 
-  const handleSecurityChange = (event) => {
-    const { value } = event.target;
-    const selected = typeof value === 'string' ? value.split(',') : value;
-    setSecurityIds(selected);
-
-    onFilterChange({
-      assetClasses,
-      securityIds: selected,
-      traderIds,
-      fromDate,
-      toDate,
-    });
+  
+  const handleCommit = () => {
+    onFilterChange(filters);
   };
 
-  const handleTraderChange = (event) => {
-    const { value } = event.target;
-    const rawArray = typeof value === 'string' ? value.split(',') : value;
-    const numericArray = rawArray.map((val) => Number(val)).filter((val) => !isNaN(val));
-    setTraderIds(numericArray);
-
-    onFilterChange({
-      assetClasses,
-      securityIds,
-      traderIds: numericArray,
-      fromDate,
-      toDate,
-    });
-  };
-
-  const handleFromDateChange = (e) => {
-    const val = e.target.value;
-    setFromDate(val);
-    onFilterChange({ assetClasses, securityIds, traderIds, fromDate: val, toDate });
-  };
-
-  const handleToDateChange = (e) => {
-    const val = e.target.value;
-    setToDate(val);
-    onFilterChange({ assetClasses, securityIds, traderIds, fromDate, toDate: val });
-  };
-
+  // 4. Reset handler
   const handleReset = () => {
-    setAssetClasses([]);
-    setSecurityIds([]);
-    setTraderIds([]);
-    setFromDate('');
-    setToDate('');
-
-    onReset({
-      assetClasses: [],
-      securityIds: [],
-      traderIds: [],
-      fromDate: '',
-      toDate: '',
-    });
+    setFilters(INITIAL_FILTERS);
+    onReset(INITIAL_FILTERS);
   };
 
   return (
@@ -169,46 +118,43 @@ export default function TradeFilterForm({ onFilterChange, onReset }) {
 
       <Box display="flex" gap={2} alignItems="center" flexWrap="wrap">
         
+        {/* Asset Classes Multi-Select */}
         <FormControl sx={{ minWidth: 200, flex: 1 }}>
           <InputLabel id="asset-class-label">Asset Classes</InputLabel>
           <Select
             labelId="asset-class-label"
-            id="asset-class-select"
             multiple
-            value={assetClasses}
-            onChange={handleAssetClassChange}
+            value={filters.assetClasses}
+            onChange={handleChange('assetClasses')}
+            onClose={handleCommit} 
             input={<OutlinedInput label="Asset Classes" />}
             MenuProps={MenuProps}
             renderValue={(selected) => (
               <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
                 {selected.map((val) => (
-                  <Chip 
-                    key={val} 
-                    label={val} 
-                    size="small" 
-                    sx={{ height: 24, fontSize: '0.75rem' }} 
-                  />
+                  <Chip key={val} label={val} size="small" sx={{ height: 24, fontSize: '0.75rem' }} />
                 ))}
               </Box>
             )}
           >
             {assetClassOptions.map((ac) => (
               <MenuItem key={ac} value={ac} sx={{ py: 1 }}>
-                <Checkbox checked={assetClasses.includes(ac)} size="small" />
+                <Checkbox checked={filters.assetClasses.includes(ac)} size="small" />
                 <ListItemText primary={ac} />
               </MenuItem>
             ))}
           </Select>
         </FormControl>
 
+        {/* Securities Multi-Select */}
         <FormControl sx={{ minWidth: 220, flex: 1 }}>
           <InputLabel id="security-label">Securities</InputLabel>
           <Select
             labelId="security-label"
-            id="security-select"
             multiple
-            value={securityIds}
-            onChange={handleSecurityChange}
+            value={filters.securityIds}
+            onChange={handleChange('securityIds')}
+            onClose={handleCommit} 
             input={<OutlinedInput label="Securities" />}
             MenuProps={MenuProps}
             renderValue={(selected) => (
@@ -216,12 +162,7 @@ export default function TradeFilterForm({ onFilterChange, onReset }) {
                 {selected.map((val) => {
                   const item = securities.find((s) => s.securityId === val);
                   return (
-                    <Chip 
-                      key={val} 
-                      label={item?.securityName || val} 
-                      size="small" 
-                      sx={{ height: 24, fontSize: '0.75rem' }} 
-                    />
+                    <Chip key={val} label={item?.securityName || val} size="small" sx={{ height: 24, fontSize: '0.75rem' }} />
                   );
                 })}
               </Box>
@@ -229,21 +170,22 @@ export default function TradeFilterForm({ onFilterChange, onReset }) {
           >
             {filteredSecurities.map((sec) => (
               <MenuItem key={sec.securityId} value={sec.securityId} sx={{ py: 1 }}>
-                <Checkbox checked={securityIds.includes(sec.securityId)} size="small" />
+                <Checkbox checked={filters.securityIds.includes(sec.securityId)} size="small" />
                 <ListItemText primary={sec.securityName || sec.securityId} />
               </MenuItem>
             ))}
           </Select>
         </FormControl>
 
+        {/* Traders Multi-Select */}
         <FormControl sx={{ minWidth: 220, flex: 1 }}>
           <InputLabel id="trader-label">Traders</InputLabel>
           <Select
             labelId="trader-label"
-            id="trader-select"
             multiple
-            value={traderIds}
-            onChange={handleTraderChange}
+            value={filters.traderIds}
+            onChange={handleChange('traderIds')}
+            onClose={handleCommit} // 
             input={<OutlinedInput label="Traders" />}
             MenuProps={MenuProps}
             renderValue={(selected) => (
@@ -251,12 +193,7 @@ export default function TradeFilterForm({ onFilterChange, onReset }) {
                 {selected.map((val) => {
                   const item = traders.find((t) => Number(t.traderId) === Number(val));
                   return (
-                    <Chip 
-                      key={val} 
-                      label={item?.traderName || val} 
-                      size="small" 
-                      sx={{ height: 24, fontSize: '0.75rem' }} 
-                    />
+                    <Chip key={val} label={item?.traderName || val} size="small" sx={{ height: 24, fontSize: '0.75rem' }} />
                   );
                 })}
               </Box>
@@ -264,18 +201,20 @@ export default function TradeFilterForm({ onFilterChange, onReset }) {
           >
             {traders.map((trader) => (
               <MenuItem key={trader.traderId} value={trader.traderId} sx={{ py: 1 }}>
-                <Checkbox checked={traderIds.includes(Number(trader.traderId))} size="small" />
+                <Checkbox checked={filters.traderIds.includes(Number(trader.traderId))} size="small" />
                 <ListItemText primary={trader.traderName} />
               </MenuItem>
             ))}
           </Select>
         </FormControl>
 
+        {/* Date Inputs */}
         <TextField
           label="From Date"
           type="date"
-          value={fromDate}
-          onChange={handleFromDateChange}
+          value={filters.fromDate}
+          onChange={handleChange('fromDate')}
+          onBlur={handleCommit} 
           InputLabelProps={{ shrink: true }}
           sx={{ width: 150 }}
         />
@@ -283,8 +222,9 @@ export default function TradeFilterForm({ onFilterChange, onReset }) {
         <TextField
           label="To Date"
           type="date"
-          value={toDate}
-          onChange={handleToDateChange}
+          value={filters.toDate}
+          onChange={handleChange('toDate')}
+          onBlur={handleCommit}
           InputLabelProps={{ shrink: true }}
           sx={{ width: 150 }}
         />
