@@ -1607,3 +1607,40 @@ Error Number:10060,State:0,Class:20
    at Swashbuckle.AspNetCore.Swagger.SwaggerMiddleware.Invoke(HttpContext httpContext, ISwaggerProvider swaggerProvider)
    at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
    at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+2026-08-11 14:30:11.527 +05:30 [INF] Fetched 10 trade items for Page 1 (Total records matching filter: 304)
+2026-08-11 14:30:11.576 +05:30 [INF] HTTP GET /api/TradeBlotter responded 200 in 208.1674 ms
+2026-08-11 14:30:11.576 +05:30 [INF] HTTP GET /api/Security responded 200 in 208.1629 ms
+2026-08-11 14:30:11.655 +05:30 [INF] HTTP GET /api/Trader responded 200 in 33.5209 ms
+2026-08-11 14:30:14.942 +05:30 [INF] HTTP GET /api/Security responded 200 in 33.0555 ms
+2026-08-11 14:30:14.973 +05:30 [INF] Fetched 10 trade items for Page 1 (Total records matching filter: 304)
+2026-08-11 14:30:14.974 +05:30 [INF] HTTP GET /api/Security responded 200 in 30.4445 ms
+2026-08-11 14:30:14.975 +05:30 [INF] HTTP GET /api/TradeBlotter responded 200 in 63.8247 ms
+2026-08-11 14:30:15.035 +05:30 [INF] Fetched 10 trade items for Page 1 (Total records matching filter: 304)
+2026-08-11 14:30:15.038 +05:30 [INF] HTTP GET /api/TradeBlotter responded 200 in 61.2424 ms
+2026-08-11 14:30:15.092 +05:30 [INF] HTTP GET /api/Trader responded 200 in 145.4560 ms
+2026-08-11 14:30:15.125 +05:30 [INF] HTTP GET /api/Trader responded 200 in 30.7844 ms
+2026-08-11 14:30:23.598 +05:30 [INF] Fetched 10 trade items for Page 1 (Total records matching filter: 253)
+2026-08-11 14:30:23.600 +05:30 [INF] HTTP GET /api/TradeBlotter responded 200 in 71.9693 ms
+2026-08-11 14:30:35.820 +05:30 [INF] Fetched 10 trade items for Page 1 (Total records matching filter: 57)
+2026-08-11 14:30:35.824 +05:30 [INF] HTTP GET /api/TradeBlotter responded 200 in 134.8195 ms
+2026-08-11 14:30:39.771 +05:30 [WRN] The query uses the 'First'/'FirstOrDefault' operator without 'OrderBy' and filter operators. This may lead to unpredictable results.
+2026-08-11 14:30:39.948 +05:30 [INF] Computed Trade Blotter Analytics. Total Volume: ¤8,106,227.08, Total Trades: 57
+2026-08-11 14:30:39.960 +05:30 [INF] HTTP GET /api/TradeBlotter/analytics responded 200 in 242.3259 ms
+2026-08-11 14:30:40.054 +05:30 [INF] Computed Trade Blotter Analytics. Total Volume: ¤8,106,227.08, Total Trades: 57
+2026-08-11 14:30:40.056 +05:30 [INF] HTTP GET /api/TradeBlotter/analytics responded 200 in 93.3268 ms
+2026-08-11 14:31:02.176 +05:30 [INF] Fetched 10 trade items for Page 1 (Total records matching filter: 57)
+2026-08-11 14:31:02.179 +05:30 [INF] HTTP GET /api/TradeBlotter responded 200 in 66.4913 ms
+2026-08-11 14:31:12.932 +05:30 [INF] Computed Trade Blotter Analytics. Total Volume: ¤8,106,227.08, Total Trades: 57
+2026-08-11 14:31:12.934 +05:30 [INF] HTTP GET /api/TradeBlotter/analytics responded 200 in 101.7747 ms
+2026-08-11 14:31:13.028 +05:30 [INF] Computed Trade Blotter Analytics. Total Volume: ¤8,106,227.08, Total Trades: 57
+2026-08-11 14:31:13.030 +05:30 [INF] HTTP GET /api/TradeBlotter/analytics responded 200 in 92.7651 ms
+2026-08-11 14:31:13.639 +05:30 [INF] Fetched 10 trade items for Page 1 (Total records matching filter: 57)
+2026-08-11 14:31:13.642 +05:30 [INF] HTTP GET /api/TradeBlotter responded 200 in 64.9893 ms
+2026-08-11 14:31:22.019 +05:30 [INF] Fetched 10 trade items for Page 1 (Total records matching filter: 253)
+2026-08-11 14:31:22.022 +05:30 [INF] HTTP GET /api/TradeBlotter responded 200 in 62.7302 ms
+2026-08-11 14:31:25.873 +05:30 [INF] Fetched 10 trade items for Page 1 (Total records matching filter: 291)
+2026-08-11 14:31:25.876 +05:30 [INF] HTTP GET /api/TradeBlotter responded 200 in 63.7841 ms
+2026-08-11 14:31:30.829 +05:30 [INF] Fetched 10 trade items for Page 1 (Total records matching filter: 157)
+2026-08-11 14:31:30.832 +05:30 [INF] HTTP GET /api/TradeBlotter responded 200 in 107.2170 ms
+2026-08-11 14:31:33.516 +05:30 [INF] Fetched 10 trade items for Page 1 (Total records matching filter: 304)
+2026-08-11 14:31:33.519 +05:30 [INF] HTTP GET /api/TradeBlotter responded 200 in 62.5678 ms
