@@ -15,13 +15,13 @@ import {
 import RestartAltIcon from '@mui/icons-material/RestartAlt';
 import { getSecurities, getTraders } from '../services/tradeBlotterService';
 
-const ITEM_HEIGHT = 48;
+const ITEM_HEIGHT = 36;
 const ITEM_PADDING_TOP = 8;
 const MenuProps = {
   PaperProps: {
     style: {
       maxHeight: ITEM_HEIGHT * 5 + ITEM_PADDING_TOP,
-      width: 260,
+      width: 180,
       borderRadius: 8,
       boxShadow: '0 8px 24px rgba(0,0,0,0.12)',
     },

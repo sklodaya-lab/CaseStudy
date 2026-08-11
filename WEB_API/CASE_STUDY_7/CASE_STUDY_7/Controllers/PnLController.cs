@@ -17,13 +17,6 @@ namespace CASE_STUDY_7.Controllers
             _pnlService = pnlService;
         }
 
-        /// <summary>
-        /// GET /api/v1/pnl/summary?asOfDate=2026-03-31&securityId=SEC1
-        /// Returns Realized PnL, Unrealized MTM PnL, Net Positions, and WAC.
-        /// Defaults to case study benchmark date: 2026-03-31 if omitted.
-        /// </summary>
-        /// 
-
         
         [HttpGet("summary")]
         public async Task<IActionResult> GetPnLSummary(
