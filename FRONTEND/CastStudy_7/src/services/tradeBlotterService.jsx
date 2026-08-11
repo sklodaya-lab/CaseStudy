@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { downloadStreamFile } from '../utils/downloadFile';
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://localhost:7189/api';
 
 const buildQueryParams = (filters = {}) => {
   const params = new URLSearchParams();
@@ -57,6 +57,7 @@ export const getTradeBlotterAnalytics = async (filters = {}) => {
 export const getSecurities = async () => {
   try {
     const response = await axios.get(`${API_BASE_URL}/Security`);
+    console.log(response)
     return response.data;
   } 
   catch (error) {

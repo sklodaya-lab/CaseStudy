@@ -1,6 +1,7 @@
 
 using CASE_STUDY_7.DataAccess;
-
+using CASE_STUDY_7.Hubs;
+using CASE_STUDY_7.Services;
 using CASE_STUDY_7_DataAccess;
 using CASE_STUDY_7_DataAccess.Reposiotires.TradeBlotteRepo;
 using CASE_STUDY_7_DataAccess.Repositories;
@@ -30,10 +31,12 @@ namespace CASE_STUDY_7
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+            builder.Services.AddSignalR();
+            builder.Services.AddHostedService<MarketDataSimulationService>();
 
             builder.Services.AddDbContext<Vantage7Context>(options =>
                 options.UseSqlServer(connectionString));
-            builder.Services.AddCors(options => options.AddPolicy("MytestCors", policy => policy.WithOrigins("http://localhost:5173").AllowAnyHeader().AllowAnyMethod()));
+            builder.Services.AddCors(options => options.AddPolicy("MytestCors", policy => policy.WithOrigins("http://localhost:5173").AllowAnyHeader().AllowAnyMethod().AllowCredentials()));
 
             builder.Services.AddTransient<ITradeRepository, TradeRepository>();
             builder.Services.AddTransient<IPriceRepository, PriceRepository>();
@@ -61,6 +64,7 @@ namespace CASE_STUDY_7
             app.UseCors("MytestCors");
 
             app.MapControllers();
+            app.MapHub<PnLHub>("/hubs/pnl");
 
             app.Run();
         }

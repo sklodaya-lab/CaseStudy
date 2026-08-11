@@ -32,11 +32,20 @@ namespace CASE_STUDY_Core.Engine
             }
             else // SELL
             {
-                // Realized PnL = (Price_sell - WAC_at_sale) * Qty_sell
-                decimal tradeRealizedPnL = (price - state.WeightedAverageCost) * quantity;
-                state.RealizedPnL += tradeRealizedPnL;
+                if (quantity < state.NetQuantity)
+                {
 
-                state.NetQuantity -= quantity;
+                    // Realized PnL = (Price_sell - WAC_at_sale) * Qty_sell
+                    decimal tradeRealizedPnL = (price - state.WeightedAverageCost) * quantity;
+                    state.RealizedPnL += tradeRealizedPnL;
+
+                    state.NetQuantity -= quantity;
+
+                }
+                else {
+                    Console.WriteLine("Short pos not allowed");
+                    
+                }
 
                 // Selling reduces position size but leaves WAC unchanged
                 // Edge Case: If net position drops to zero, reset WAC to 0

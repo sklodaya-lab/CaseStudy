@@ -5,11 +5,13 @@ import {Routes, Route, Navigate} from 'react-router-dom'
 import PnLSummaryPage from './pages/PnLSummaryPage';
 import PnLTimeSeriesPage from './pages/PnLTimeSeriesPage';
 import TradeBlotterPage from './pages/TradeBlotterPage'
+import Navbar from './Components/Navbar';
 
 function App() {
 
   return (
     <>
+    <Navbar/>
       <Routes>
         <Route path="/" element={<Navigate to="/pnl" replace />} />
         <Route path='/pnl' element={<PnLSummaryPage/>}/>
