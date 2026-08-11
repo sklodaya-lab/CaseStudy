@@ -37,7 +37,7 @@ const TradeTable = ({ trades = [], loading = false,isDescending = true, onToggle
   return (
     <TableContainer component={Paper} elevation={2} sx={{ borderRadius: 2 }}>
       <Table size="small">
-        <TableHead sx={{ backgroundColor: (theme) => theme.palette.grey[100] }}>
+        <TableHead sx={{ backgroundColor: '#ffffff' }}>
           <TableRow>
             <TableCell sx={{ fontWeight: 700 }}>TRADE ID</TableCell>
             <TableCell sx={{ fontWeight: 700 }}>ASSET CLASS</TableCell>
@@ -75,7 +75,7 @@ const TradeTable = ({ trades = [], loading = false,isDescending = true, onToggle
                       height: 22,
                       borderColor: '#cbd5e1',
                       color: '#334155',
-                      backgroundColor: '#f8fafc',
+                      backgroundColor: '#ffffff',
                     }}
                   />
                 </TableCell>

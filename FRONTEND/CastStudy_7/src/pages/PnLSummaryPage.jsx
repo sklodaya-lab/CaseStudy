@@ -199,7 +199,7 @@ export default function PnLSummaryPage() {
 
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
-      <Container maxWidth="xl" sx={{ py: 4 }}>
+      <Container maxWidth="xl" sx={{ py: 4 , backgroundColor: '#FFFFFF'}}>
         <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
           <Typography variant="h4" fontWeight="bold">
             Portfolio P&L Summary
@@ -268,8 +268,8 @@ export default function PnLSummaryPage() {
                 startIcon={<SearchIcon />}
                 disableElevation
                 sx={{
-                  backgroundColor: '#3a05fa',
-                  '&:hover': { backgroundColor: '#2b03be' },
+                  backgroundColor: '#269e9e',
+                  '&:hover': { backgroundColor: '#269e6e' },
                 }}
               >
                 Fetch Data

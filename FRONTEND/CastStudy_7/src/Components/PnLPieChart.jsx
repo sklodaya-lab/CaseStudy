@@ -5,6 +5,7 @@ import { PieChart } from '@mui/x-charts/PieChart';
 export default function PnLPieChart({ data = [] }) {
   if (!data || data.length === 0) return null;
 
+
   // Format currency for tooltips
   const valueFormatter = (item) =>
     new Intl.NumberFormat('en-IN', {
@@ -32,6 +33,7 @@ export default function PnLPieChart({ data = [] }) {
     }));
 
   return (
+    (data.length > 1) &&
     <Paper elevation={2} sx={{ p: 3, mb: 4 }}>
       <Typography variant="h6" fontWeight="bold" gutterBottom>
         P&L Contribution by Security (Positive Gains)

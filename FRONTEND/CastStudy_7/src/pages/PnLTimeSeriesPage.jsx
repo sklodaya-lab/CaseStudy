@@ -51,7 +51,7 @@ export default function PnLTimeSeriesPage() {
       <Button
         startIcon={<ArrowBackIcon />}
         onClick={() => navigate(-1)}
-        sx={{ mb: 2 }}
+        sx={{color: '#269e9e', mb: 2 }}
       >
         Back to Summary
       </Button>
@@ -84,6 +84,7 @@ export default function PnLTimeSeriesPage() {
               size="small"
               startIcon={<SwapVertIcon />}
               onClick={() => setIsTableReversed((prev) => !prev)}
+              sx={{color: '#269e9e'}}
             >
               Order: {isTableReversed ? 'Descending (Newest First)' : 'Ascending (Oldest First)'}
             </Button>

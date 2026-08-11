@@ -1,11 +1,12 @@
-import DownloadIcon from '@mui/icons-material/Download'; // 👈 1. Import Download Icon
-import { Alert, Box, Button, Tab, Tabs, Typography } from '@mui/material'; // 👈 2. Import Button
+import DownloadIcon from '@mui/icons-material/Download'; 
+import { Alert, Box, Button, Tab, Tabs, Typography } from '@mui/material'; 
 import React, { useCallback, useEffect, useState } from 'react';
 import Pagination from '../components/Pagination';
 import TradeAnalytics from '../components/TradeAnalytics';
 import TradeFilterForm from '../components/TradeFilterForm';
 import TradeTable from '../components/TradeTable';
 import { exportTradeBlotterToCsv, getTradeBlotter } from '../services/tradeBlotterService';
+
 
 const TradeBlotterPage = () => 
   {
@@ -107,7 +108,7 @@ const TradeBlotterPage = () =>
   return (
     <Box 
       sx={{ 
-        backgroundColor: '#f4f6f8', 
+        backgroundColor: '#ffffff', 
         minHeight: '100vh', 
         py: 3, 
         px: { xs: 2, sm: 4, md: 5 }, 
@@ -148,7 +149,7 @@ const TradeBlotterPage = () =>
           value={activeTab} 
           onChange={(e, newValue) => setActiveTab(newValue)} 
           textColor="primary"
-          indicatorColor="primary"
+          indicatorColor="#269e9e"
         >
           <Tab label="Trade Blotter Table" sx={{ fontWeight: 600, textTransform: 'none' }} />
           <Tab label="Analytics & Exposure" sx={{ fontWeight: 600, textTransform: 'none' }} />
@@ -160,7 +161,7 @@ const TradeBlotterPage = () =>
           startIcon={<DownloadIcon />}
           onClick={handleExport}
           disabled={exporting}
-          sx={{ fontWeight: 600, textTransform: 'none', borderRadius: 2, mb: 1 }}
+          sx={{ fontWeight: 600, textTransform: 'none', borderRadius: 2, mb: 1 , backgroundColor:'#269e9e', color: '#000000'}}
         >
           {exporting ? 'Exporting...' : 'Export CSV'}
         </Button>
@@ -168,7 +169,7 @@ const TradeBlotterPage = () =>
 
       {/* Tab Panel 0: Table View */}
       {activeTab === 0 && (
-        <Box sx={{ width: '100%' }}>
+        <Box sx={{ backgroundColor: '#ffffff', width: '100%' }}>
           <TradeTable trades={trades} loading={loading} isDescending={isDescending} onToggleSort={() => setIsDescending(prev => !prev)} />
           <Pagination
             currentPage={currentPage}

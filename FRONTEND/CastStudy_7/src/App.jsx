@@ -13,7 +13,7 @@ function App() {
     <>
     <Navbar/>
       <Routes>
-        <Route path="/" element={<Navigate to="/pnl" replace />} />
+        <Route path="/" element={<Navigate to="/tradeblotter" replace />} />
         <Route path='/pnl' element={<PnLSummaryPage/>}/>
         <Route path="/pnl/timeseries/:securityId" element={<PnLTimeSeriesPage/>} />
         <Route path="/tradeblotter" element={<TradeBlotterPage />} />

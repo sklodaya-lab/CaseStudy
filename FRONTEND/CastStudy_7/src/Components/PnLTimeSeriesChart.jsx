@@ -53,7 +53,7 @@ export default function PnLTimeSeriesChart({ data = [] }) {
         <Typography variant="h6" fontWeight="bold">
           Historical P&L Performance
         </Typography>
-        <Button variant="outlined" size="small" onClick={handleResetZoom}>
+        <Button variant="outlined" size="small" onClick={handleResetZoom} sx={{color:'#269e9e', borderColor: '#269e9e'}}>
           View All Data
         </Button>
       </Box>
@@ -73,13 +73,13 @@ export default function PnLTimeSeriesChart({ data = [] }) {
           {
             data: totalPnLData,
             label: 'Total P&L',
-            color: '#16a34a',
+            color: '#09ffad',
             valueFormatter,
           },
           {
             data: UnrealisedPnLData,
             label: 'Unrealised PnL',
-            color: '#eb8825',
+            color: '#269e9e',
             valueFormatter,
           },
         ]}
@@ -99,13 +99,13 @@ export default function PnLTimeSeriesChart({ data = [] }) {
           {
             data: closingPriceData,
             label: 'Closing Price',
-            color: '#eb8825',
+            color: '#269e9e',
             valueFormatter,
           },
           {
             data: wacData,
             label: 'Weighted Average Cost',
-            color: '#16a34a',
+            color: '#09ffad',
             valueFormatter,
           },
         ]}
@@ -127,7 +127,7 @@ export default function PnLTimeSeriesChart({ data = [] }) {
           max={data.length - 1}
           disableSwap // Prevents the left and right thumbs from crossing over each other
           sx={{
-            color: '#eb8825',
+            color: '#269e9e',
             '& .MuiSlider-valueLabel': {
               backgroundColor: '#333',
             },
