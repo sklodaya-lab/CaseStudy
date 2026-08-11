@@ -2,6 +2,7 @@
 using CASE_STUDY_7_Models.Interfaces;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,6 +14,7 @@ namespace CASE_STUDY_7_DataAccess.Repositories
     public class PriceRepository : IPriceRepository
     {
         private readonly Vantage7Context _context;
+        private readonly ILogger<PriceRepository> _logger;
 
         public PriceRepository(Vantage7Context context)
         {
@@ -25,7 +27,6 @@ namespace CASE_STUDY_7_DataAccess.Repositories
             var priceRecord = await _context.EodPrices.Where(p => p.SecurityId == securityId && p.PriceDate <= asOfDate)
                 .OrderByDescending(p => p.PriceDate)
                 .FirstOrDefaultAsync();
-
             return priceRecord?.ClosePrice;
         }
 
@@ -39,6 +40,7 @@ namespace CASE_STUDY_7_DataAccess.Repositories
                 .FromSqlRaw("SELECT SecurityID, PriceDate, ClosePrice, PriceId FROM g7.fn_GetEODPricesAsOf(@AsOfDate)", asOfParam)
                 .AsNoTracking()
                 .ToListAsync();
+
 
             return prices.ToDictionary(p => p.SecurityId, p => p.ClosePrice);
         }

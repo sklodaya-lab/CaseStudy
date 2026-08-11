@@ -11,6 +11,7 @@ using CASE_STUDY_Core.Engine;
 using CASE_STUDY_Core.Services;
 
 using Microsoft.EntityFrameworkCore;
+using Serilog;
 
 namespace CASE_STUDY_7
 {
@@ -22,7 +23,10 @@ namespace CASE_STUDY_7
 
             var connectionString = builder.Configuration.GetConnectionString("MyCon");
 
-           
+            builder.Host.UseSerilog((context, services, configuration) => configuration
+                            .ReadFrom.Configuration(context.Configuration)
+                            .ReadFrom.Services(services));
+
 
             // Add services to the container.
 
@@ -58,6 +62,7 @@ namespace CASE_STUDY_7
                 app.UseSwaggerUI();
             }
 
+            app.UseSerilogRequestLogging();
             app.UseHttpsRedirection();
 
             app.UseAuthorization();

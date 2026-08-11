@@ -1,13 +1,14 @@
 ﻿using CASE_STUDY_7_Models.Domain;
 using CASE_STUDY_7_Models.Interfaces;
 using CASE_STUDY_Core.Engine;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace CASE_STUDY_Core.Cache
 {
@@ -18,18 +19,24 @@ namespace CASE_STUDY_Core.Cache
         private readonly ConcurrentDictionary<DateOnly, ConcurrentDictionary<string, SecurityPositionState>> _store = new();
         private readonly ConcurrentDictionary<string, SemaphoreSlim> _locks = new();
         private readonly IServiceScopeFactory _scopeFactory;
+        private readonly ILogger<PnlStateCache> _logger;
 
         // Dataset start date: 2 Feb 2026
         private static readonly DateOnly InceptionDate = new DateOnly(2026, 02, 02);
 
-        public PnlStateCache(IServiceScopeFactory scopeFactory)
+        public PnlStateCache(IServiceScopeFactory scopeFactory, ILogger<PnlStateCache> logger)
         {
             _scopeFactory = scopeFactory;
+            _logger = logger;
         }
 
 
         public IReadOnlyList<(DateOnly Date, SecurityPositionState State)> GetHistoryFromCache(string securityId, DateOnly maxDate)
         {
+
+            _logger.LogInformation("Retrieved {Count} historical daily snapshots from cache for SecurityId: {SecurityId} up to {MaxDate}",
+               securityId, maxDate);
+
             // Filter and return already-cached keys in memory without running SQL or engine loops
             return _store.Keys
                 .Where(d => d <= maxDate && _store[d].ContainsKey(securityId))
@@ -43,6 +50,7 @@ namespace CASE_STUDY_Core.Cache
             // O(1) direct lookup if already computed
             if (_store.TryGetValue(asOfDate, out var dayStore) && dayStore.TryGetValue(securityId, out var state))
             {
+                _logger.LogInformation("CACHE HIT | Position state found in memory for SecurityId: {SecurityId} as of {AsOfDate}", securityId, asOfDate);
                 return state.DeepClone();
             }
 
@@ -53,6 +61,7 @@ namespace CASE_STUDY_Core.Cache
             {
                 if (_store.TryGetValue(asOfDate, out dayStore) && dayStore.TryGetValue(securityId, out state))
                 {
+                    _logger.LogInformation("CACHE HIT (post-lock) | Position state found in memory for SecurityId: {SecurityId} as of {AsOfDate}", securityId, asOfDate);
                     return state.DeepClone();
                 }
 
@@ -68,6 +77,8 @@ namespace CASE_STUDY_Core.Cache
                 SecurityPositionState currentState = maxCachedDate.HasValue
                     ? _store[maxCachedDate.Value][securityId].DeepClone()
                     : new SecurityPositionState { SecurityId = securityId };
+
+                _logger.LogInformation("Rolling forward PnL state for {SecurityId} from {StartDate} to {AsOfDate}...", securityId, startDate, asOfDate);
 
                 using (var scope = _scopeFactory.CreateScope())
                 {
@@ -94,7 +105,7 @@ namespace CASE_STUDY_Core.Cache
                         dayDict[securityId] = currentState.DeepClone();
                     }
                 }
-
+                _logger.LogInformation("Successfully cached daily snapshots for SecurityId: {SecurityId} up to {AsOfDate}", securityId, asOfDate);
                 return currentState;
             }
             finally

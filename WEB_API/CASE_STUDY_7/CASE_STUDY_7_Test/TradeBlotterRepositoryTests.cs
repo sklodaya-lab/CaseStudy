@@ -3,11 +3,15 @@ using CASE_STUDY_7.Models;
 using CASE_STUDY_7_DataAccess.Reposiotires.TradeBlotteRepo;
 using CASE_STUDY_7_Models.DTOs;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging.Abstractions; 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
+using Xunit;
 
 namespace CASE_STUDY_7_Test
 {
@@ -67,7 +71,7 @@ namespace CASE_STUDY_7_Test
         public async Task GetTradeBlotterAsync_NoFilters_ReturnsAllPagedRecords()
         {
             using var context = GetDbContext("Db_AllRecords");
-            var repo = new TradeBlotterRepository(context);
+            var repo = new TradeBlotterRepository(context, NullLogger<TradeBlotterRepository>.Instance);
             var request = new TradeBlotterRequestDto { PageNumber = 1, PageSize = 10 };
 
             var result = await repo.GetTradeBlotterAsync(request, CancellationToken.None);
@@ -81,7 +85,7 @@ namespace CASE_STUDY_7_Test
         public async Task GetTradeBlotterAsync_DateRangeFilter_ReturnsMatchingDatesOnly()
         {
             using var context = GetDbContext("Db_DateFilter");
-            var repo = new TradeBlotterRepository(context);
+            var repo = new TradeBlotterRepository(context, NullLogger<TradeBlotterRepository>.Instance);
             var request = new TradeBlotterRequestDto
             {
                 FromDate = new DateOnly(2026, 1, 10),
@@ -98,10 +102,10 @@ namespace CASE_STUDY_7_Test
         public async Task GetTradeBlotterAsync_CommaSeparatedSecurityIds_ParsesAndFiltersCorrectly()
         {
             using var context = GetDbContext("Db_CommaSecurities");
-            var repo = new TradeBlotterRepository(context);
+            var repo = new TradeBlotterRepository(context, NullLogger<TradeBlotterRepository>.Instance);
             var request = new TradeBlotterRequestDto
             {
-                SecurityIds = new List<string> { "EQ04, FI01" } 
+                SecurityIds = new List<string> { "EQ04, FI01" }
             };
 
             var result = await repo.GetTradeBlotterAsync(request, CancellationToken.None);
@@ -113,7 +117,7 @@ namespace CASE_STUDY_7_Test
         public async Task GetTradeBlotterAsync_FilterByTraderIdAndAssetClass_ReturnsMatchingRecord()
         {
             using var context = GetDbContext("Db_TraderAssetClassFilter");
-            var repo = new TradeBlotterRepository(context);
+            var repo = new TradeBlotterRepository(context, NullLogger<TradeBlotterRepository>.Instance);
             var request = new TradeBlotterRequestDto
             {
                 TraderIds = new List<int> { 5 },
@@ -127,14 +131,13 @@ namespace CASE_STUDY_7_Test
             Assert.Equal("Equity", result.Items.First().AssetClass);
         }
 
-
         [Theory]
         [InlineData("NON_EXISTENT", false)]
         [InlineData("EQ04", true)]
         public async Task GetTradeBlotterAsync_FilterBySecurityId_HandlesExistence(string securityId, bool exists)
         {
             using var context = GetDbContext($"Db_SecCheck_{securityId}");
-            var repo = new TradeBlotterRepository(context);
+            var repo = new TradeBlotterRepository(context, NullLogger<TradeBlotterRepository>.Instance);
             var request = new TradeBlotterRequestDto { SecurityIds = new List<string> { securityId } };
 
             var result = await repo.GetTradeBlotterAsync(request, CancellationToken.None);
@@ -154,7 +157,7 @@ namespace CASE_STUDY_7_Test
         public async Task GetTradeBlotterAsync_FutureDateRange_ReturnsZeroRecords()
         {
             using var context = GetDbContext("Db_FutureDate");
-            var repo = new TradeBlotterRepository(context);
+            var repo = new TradeBlotterRepository(context, NullLogger<TradeBlotterRepository>.Instance);
             var request = new TradeBlotterRequestDto
             {
                 FromDate = new DateOnly(2027, 1, 1),
@@ -167,15 +170,13 @@ namespace CASE_STUDY_7_Test
             Assert.Empty(result.Items);
         }
 
-   
-
         [Theory]
-        [InlineData(0, 0)]  
+        [InlineData(0, 0)]
         [InlineData(-1, -5)] // Negative bounds -> Falls back safely
         public async Task GetTradeBlotterAsync_InvalidPaginationBounds_FallsBackToDefaults(int pageNum, int pageSize)
         {
             using var context = GetDbContext($"Db_Pagination_{pageNum}_{pageSize}");
-            var repo = new TradeBlotterRepository(context);
+            var repo = new TradeBlotterRepository(context, NullLogger<TradeBlotterRepository>.Instance);
             var request = new TradeBlotterRequestDto { PageNumber = pageNum, PageSize = pageSize };
 
             var result = await repo.GetTradeBlotterAsync(request, CancellationToken.None);
@@ -184,12 +185,11 @@ namespace CASE_STUDY_7_Test
             Assert.Equal(2, result.TotalRecords);
         }
 
-
         [Fact]
         public async Task GetTradeBlotterAnalyticsAsync_ValidData_CalculatesCorrectTotals()
         {
             using var context = GetDbContext("Db_Analytics_Pos");
-            var repo = new TradeBlotterRepository(context);
+            var repo = new TradeBlotterRepository(context, NullLogger<TradeBlotterRepository>.Instance);
             var request = new TradeBlotterRequestDto();
 
             var result = await repo.GetTradeBlotterAnalyticsAsync(request, CancellationToken.None);
@@ -205,7 +205,7 @@ namespace CASE_STUDY_7_Test
         public async Task GetTradeBlotterAnalyticsAsync_NoMatchingRecords_ReturnsZeroedTotalsGracefully()
         {
             using var context = GetDbContext("Db_Analytics_Neg");
-            var repo = new TradeBlotterRepository(context);
+            var repo = new TradeBlotterRepository(context, NullLogger<TradeBlotterRepository>.Instance);
             var request = new TradeBlotterRequestDto { SecurityIds = new List<string> { "NON_EXISTENT" } };
 
             var result = await repo.GetTradeBlotterAnalyticsAsync(request, CancellationToken.None);
@@ -221,7 +221,7 @@ namespace CASE_STUDY_7_Test
         public async Task ExportTradeBlotterToStreamAsync_ReturnsValidReadableStream()
         {
             using var context = GetDbContext("Db_CsvExport_Pos");
-            var repo = new TradeBlotterRepository(context);
+            var repo = new TradeBlotterRepository(context, NullLogger<TradeBlotterRepository>.Instance);
             var request = new TradeBlotterRequestDto();
 
             using var stream = await repo.ExportTradeBlotterToStreamAsync(request, CancellationToken.None);
