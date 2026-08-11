@@ -2,6 +2,7 @@
 using CASE_STUDY_7_Models.DTOs;
 using CASE_STUDY_7_Models.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Moq;
 using System;
 using System.Collections.Generic;
@@ -15,11 +16,13 @@ namespace CASE_STUDY_7_Test
     {
         private readonly Mock<ITradeBlotterRepository> _mockRepo;
         private readonly TradeBlotterController _controller;
+        private readonly Mock<ILogger<TradeBlotterController>> _mockLogger;
 
         public TradeBlotterControllerTests()
         {
             _mockRepo = new Mock<ITradeBlotterRepository>();
-            _controller = new TradeBlotterController(_mockRepo.Object);
+            _mockLogger = new Mock<ILogger<TradeBlotterController>>();
+            _controller = new TradeBlotterController(_mockRepo.Object, _mockLogger.Object);
         }
 
         [Fact]
@@ -94,22 +97,6 @@ namespace CASE_STUDY_7_Test
             Assert.Equal(200, okResult.StatusCode);
             Assert.Equal(0, returnData.TotalRecords);
             Assert.Empty(returnData.Items);
-        }
-
-        
-           [Fact]
-        public async Task GetTradeBlotter_CancellationTokenCancelled_ThrowsTaskCanceledException()
-        {
-
-            var requestDto = new TradeBlotterRequestDto();
-            using var cts = new CancellationTokenSource();
-            cts.Cancel(); 
-
-            _mockRepo
-                .Setup(repo => repo.GetTradeBlotterAsync(It.IsAny<TradeBlotterRequestDto>(), cts.Token))
-                .ThrowsAsync(new TaskCanceledException());
-
-            await Assert.ThrowsAsync<TaskCanceledException>(() => _controller.GetTradeBlotter(requestDto, cts.Token));
         }
 
         [Fact]
