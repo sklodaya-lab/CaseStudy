@@ -94,88 +94,7 @@ export default function PnLSummaryPage() {
         setSecuritiesLoading(false);
       });
   }, []);
-  // Handle WebSocket Connection for Live Price Updates
-  useEffect(() => {
 
-    // Only establish connection when data is loaded
-    if (!data || data.length === 0) return;
-
-    // 1. Build SignalR Hub Connection using HTTPS URL (SignalR handles WS upgrade)
-    const connection = new signalR.HubConnectionBuilder()
-      .withUrl('https://localhost:7189/hubs/pnl', {
-        skipNegotiation: false,
-        transport: signalR.HttpTransportType.WebSockets
-      })
-      .withAutomaticReconnect()
-      .configureLogging(signalR.LogLevel.Warning)
-      .build();
-
-    // 2. Attach SignalR Event Listener matching backend SendAsync("ReceivePriceUpdate", ...)
-    connection.on('ReceivePriceUpdate', (update) => {
-      try {
-        // Backend Payload: { securityId: "EQ02", price: 495.20 }
-        const { securityId: updatedId, price: newPrice } = update || {};
-
-        if (!updatedId || newPrice === undefined) return;
-
-        setData((prevData) => {
-          if (!prevData) return prevData;
-
-          return prevData.map((item) => {
-            if (item.securityId !== updatedId) return item;
-
-            const oldPrice = Number(item.closingPrice) || 0;
-            const updatedPrice = Number(newPrice);
-
-            // Frontend Recalculation
-            const wac = Number(item.weightedAverageCost) || 0;
-            const netPos = Number(item.netPosition) || 0;
-            const realizedPnL = Number(item.realizedPnL) || 0;
-
-            const newUnrealized = (updatedPrice - wac) * netPos;
-            const newTotal = realizedPnL + newUnrealized;
-
-            // Trigger Visual Flash Direction
-            const flashClass = updatedPrice > oldPrice ? 'flash-up' : updatedPrice < oldPrice ? 'flash-down' : '';
-            setPriceFlashMap((prev) => ({ ...prev, [updatedId]: flashClass }));
-
-            // Reset flash animation
-            setTimeout(() => {
-              setPriceFlashMap((prev) => ({ ...prev, [updatedId]: '' }));
-            }, 1200);
-
-            return {
-              ...item,
-              closingPrice: updatedPrice,
-              mtmUnrealizedPnL: newUnrealized,
-              totalPnL: newTotal,
-            };
-          });
-        });
-      } catch (err) {
-        console.error('Error handling live price update:', err);
-      }
-    });
-
-    // 3. Connection State Event Handlers
-    connection.onreconnecting(() => setWsConnected(false));
-    connection.onreconnected(() => setWsConnected(true));
-    connection.onclose(() => setWsConnected(false));
-
-    // 4. Start Connection
-    connection
-      .start()
-      .then(() => setWsConnected(true))
-      .catch((err) => {
-        console.error('SignalR Connection Error:', err);
-        setWsConnected(false);
-      });
-
-    // 5. Cleanup on Unmount
-    return () => {
-      connection.stop();
-    };
-  }, [data?.length]);
 
   const handleResetFilters = () => {
     setAsOfDate(null);
@@ -204,17 +123,6 @@ export default function PnLSummaryPage() {
           <Typography variant="h4" fontWeight="bold">
             Portfolio P&L Summary
           </Typography>
-
-          {/* Live WS Status Indicator */}
-          {data && (
-            <Chip
-              icon={wsConnected ? <WifiIcon /> : <WifiOffIcon />}
-              label={wsConnected ? 'LIVE FEED ACTIVE' : 'DISCONNECTED'}
-              color={wsConnected ? 'success' : 'default'}
-              variant="outlined"
-              size="small"
-            />
-          )}
         </Box>
 
         {/* Filter Toolbar */}

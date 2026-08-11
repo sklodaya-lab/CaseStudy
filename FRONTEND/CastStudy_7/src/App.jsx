@@ -17,6 +17,7 @@ function App() {
         <Route path='/pnl' element={<PnLSummaryPage/>}/>
         <Route path="/pnl/timeseries/:securityId" element={<PnLTimeSeriesPage/>} />
         <Route path="/tradeblotter" element={<TradeBlotterPage />} />
+        <Route path='/home' element={<Home/>} />
       </Routes>
     </>
   )
