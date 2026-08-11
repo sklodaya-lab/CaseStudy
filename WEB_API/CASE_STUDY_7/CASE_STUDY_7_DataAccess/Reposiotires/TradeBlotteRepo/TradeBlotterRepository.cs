@@ -26,7 +26,12 @@ namespace CASE_STUDY_7_DataAccess.Reposiotires.TradeBlotteRepo
             TradeBlotterRequestDto request,
             CancellationToken cancellationToken = default)
         {
-            var query = _context.VwTradeBlotters.AsNoTracking().AsQueryable();
+            var query = _context.VwTradeBlotters
+    .FromSqlRaw("SELECT * FROM g7.vw_TradeBlotter WITH (NOEXPAND)")
+    .AsNoTracking()
+    .AsQueryable();
+
+            // Proceed with ApplyFilters(query, request)...
 
             query = ApplyFilters(query, request);
 
@@ -78,7 +83,12 @@ namespace CASE_STUDY_7_DataAccess.Reposiotires.TradeBlotteRepo
     TradeBlotterRequestDto request,
     CancellationToken cancellationToken = default)
         {
-            var query = _context.VwTradeBlotters.AsNoTracking().AsQueryable();
+            var query = _context.VwTradeBlotters
+    .FromSqlRaw("SELECT * FROM g7.vw_TradeBlotter WITH (NOEXPAND)")
+    .AsNoTracking()
+    .AsQueryable();
+
+            // Proceed with ApplyFilters(query, request)...
 
             query = ApplyFilters(query, request);
 
@@ -190,7 +200,12 @@ namespace CASE_STUDY_7_DataAccess.Reposiotires.TradeBlotteRepo
 
         public async Task<Stream> ExportTradeBlotterToStreamAsync(TradeBlotterRequestDto request, CancellationToken cancellationToken = default)
         {
-            var query = _context.VwTradeBlotters.AsNoTracking().AsQueryable();
+            var query = _context.VwTradeBlotters
+    .FromSqlRaw("SELECT * FROM g7.vw_TradeBlotter WITH (NOEXPAND)")
+    .AsNoTracking()
+    .AsQueryable();
+
+            // Proceed with ApplyFilters(query, request)...
 
             query = ApplyFilters(query, request);
 
