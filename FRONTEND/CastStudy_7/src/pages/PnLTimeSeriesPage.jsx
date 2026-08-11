@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { useParams, useSearchParams, useNavigate } from 'react-router-dom';
 import {
   Container, Typography, Box, CircularProgress, Alert, Button,
   Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Chip
 } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import SwapVertIcon from '@mui/icons-material/SwapVert';
 import { getPnLTimeSeries } from '../services/api';
 import PnLTimeSeriesChart from '../Components/PnLTimeSeriesChart';
 
@@ -16,6 +17,7 @@ export default function PnLTimeSeriesPage() {
   const asOfDate = searchParams.get('asOfDate') || '';
 
   const [timeSeriesData, setTimeSeriesData] = useState([]);
+  const [isTableReversed, setIsTableReversed] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -35,6 +37,11 @@ export default function PnLTimeSeriesPage() {
         setLoading(false);
       });
   }, [securityId, asOfDate]);
+
+  // Derived dataset for table rendering only (keeps chart order unaffected)
+  const displayTableData = useMemo(() => {
+    return isTableReversed ? [...timeSeriesData].reverse() : timeSeriesData;
+  }, [timeSeriesData, isTableReversed]);
 
   const formatNumber = (val) =>
     new Intl.NumberFormat('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(val || 0);
@@ -65,44 +72,59 @@ export default function PnLTimeSeriesPage() {
         <Alert severity="error">{error}</Alert>
       ) : (
         <>
-        <PnLTimeSeriesChart data={timeSeriesData} />
+          <PnLTimeSeriesChart data={timeSeriesData} />
 
-        <TableContainer component={Paper} elevation={2}>
-          <Table sx={{ minWidth: 650 }}>
-            <TableHead sx={{ backgroundColor: 'action.hover' }}>
-              <TableRow>
-                <TableCell><strong>Valuation Date</strong></TableCell>
-                <TableCell><strong>Security ID</strong></TableCell>
-                <TableCell align="right"><strong>Net Position</strong></TableCell>
-                <TableCell align="right"><strong>Weighted Avg Cost</strong></TableCell>
-                <TableCell align="right"><strong>Closing Price</strong></TableCell>
-                <TableCell align="right"><strong>Realized P&L</strong></TableCell>
-                <TableCell align="right"><strong>Unrealized P&L</strong></TableCell>
-                <TableCell align="right"><strong>Total P&L</strong></TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {timeSeriesData.map((row, index) => (
-                <TableRow key={row.valuationDate || index} hover>
-                  <TableCell>{row.valuationDate}</TableCell>
-                  <TableCell>{row.securityId}</TableCell>
-                  <TableCell align="right">{row.netPosition}</TableCell>
-                  <TableCell align="right">{formatNumber(row.weightedAverageCost)}</TableCell>
-                  <TableCell align="right">{formatNumber(row.closingPrice)}</TableCell>
-                  <TableCell align="right" sx={{ color: row.realizedPnL >= 0 ? 'success.main' : 'error.main' }}>
-                    {formatNumber(row.realizedPnL)}
-                  </TableCell>
-                  <TableCell align="right" sx={{ color: row.mtmUnrealizedPnL >= 0 ? 'success.main' : 'error.main' }}>
-                    {formatNumber(row.mtmUnrealizedPnL)}
-                  </TableCell>
-                  <TableCell align="right" sx={{ color: row.totalPnL >= 0 ? 'success.main' : 'error.main', fontWeight: 'bold' }}>
-                    {formatNumber(row.totalPnL)}
-                  </TableCell>
+          {/* Table Control Header */}
+          <Box display="flex" justifyContent="space-between" alignItems="center" mb={1.5} mt={4}>
+            <Typography variant="h6" fontWeight="bold">
+              Historical Data Table
+            </Typography>
+            <Button
+              variant="outlined"
+              size="small"
+              startIcon={<SwapVertIcon />}
+              onClick={() => setIsTableReversed((prev) => !prev)}
+            >
+              Order: {isTableReversed ? 'Descending (Newest First)' : 'Ascending (Oldest First)'}
+            </Button>
+          </Box>
+
+          <TableContainer component={Paper} elevation={2}>
+            <Table sx={{ minWidth: 650 }}>
+              <TableHead sx={{ backgroundColor: 'action.hover' }}>
+                <TableRow>
+                  <TableCell><strong>Valuation Date</strong></TableCell>
+                  <TableCell><strong>Security ID</strong></TableCell>
+                  <TableCell align="right"><strong>Net Position</strong></TableCell>
+                  <TableCell align="right"><strong>Weighted Avg Cost</strong></TableCell>
+                  <TableCell align="right"><strong>Closing Price</strong></TableCell>
+                  <TableCell align="right"><strong>Realized P&L</strong></TableCell>
+                  <TableCell align="right"><strong>Unrealized P&L</strong></TableCell>
+                  <TableCell align="right"><strong>Total P&L</strong></TableCell>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
+              </TableHead>
+              <TableBody>
+                {displayTableData.map((row, index) => (
+                  <TableRow key={row.valuationDate || index} hover>
+                    <TableCell>{row.valuationDate}</TableCell>
+                    <TableCell>{row.securityId}</TableCell>
+                    <TableCell align="right">{row.netPosition}</TableCell>
+                    <TableCell align="right">{formatNumber(row.weightedAverageCost)}</TableCell>
+                    <TableCell align="right">{formatNumber(row.closingPrice)}</TableCell>
+                    <TableCell align="right" sx={{ color: row.realizedPnL >= 0 ? 'success.main' : 'error.main' }}>
+                      {formatNumber(row.realizedPnL)}
+                    </TableCell>
+                    <TableCell align="right" sx={{ color: row.mtmUnrealizedPnL >= 0 ? 'success.main' : 'error.main' }}>
+                      {formatNumber(row.mtmUnrealizedPnL)}
+                    </TableCell>
+                    <TableCell align="right" sx={{ color: row.totalPnL >= 0 ? 'success.main' : 'error.main', fontWeight: 'bold' }}>
+                      {formatNumber(row.totalPnL)}
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
         </>
       )}
     </Container>
