@@ -3,7 +3,6 @@ using CASE_STUDY_7.DataAccess;
 using CASE_STUDY_7.Hubs;
 using CASE_STUDY_7.Services;
 using CASE_STUDY_7_DataAccess;
-using CASE_STUDY_7_DataAccess.Reposiotires.TradeBlotteRepo;
 using CASE_STUDY_7_DataAccess.Repositories;
 using CASE_STUDY_7_Models.Interfaces;
 using CASE_STUDY_Core.Cache;
@@ -40,7 +39,7 @@ namespace CASE_STUDY_7
 
             builder.Services.AddDbContext<Vantage7Context>(options =>
                 options.UseSqlServer(connectionString));
-            builder.Services.AddCors(options => options.AddPolicy("MytestCors", policy => policy.WithOrigins("http://localhost:5173").AllowAnyHeader().AllowAnyMethod().AllowCredentials()));
+            builder.Services.AddCors(options => options.AddPolicy("MytestCors", policy => policy.WithOrigins("http://localhost:5173").AllowAnyHeader().WithMethods("GET").AllowCredentials()));
 
             builder.Services.AddTransient<ITradeRepository, TradeRepository>();
             builder.Services.AddTransient<IPriceRepository, PriceRepository>();

@@ -1,4 +1,4 @@
-﻿using CASE_STUDY_7_DataAccess.Reposiotires.TradeBlotteRepo;
+﻿using CASE_STUDY_7_DataAccess.Repositories;
 using CASE_STUDY_7_Models.DTOs;
 using CASE_STUDY_7_Models.Interfaces;
 using Microsoft.AspNetCore.Mvc;

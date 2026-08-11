@@ -1,9 +1,9 @@
 ﻿using CASE_STUDY_7.DataAccess;
 using CASE_STUDY_7.Models;
-using CASE_STUDY_7_DataAccess.Reposiotires.TradeBlotteRepo;
+using CASE_STUDY_7_DataAccess.Repositories;
 using CASE_STUDY_7_Models.DTOs;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging.Abstractions; 
+using Microsoft.Extensions.Logging.Abstractions;
 using System;
 using System.Collections.Generic;
 using System.IO;

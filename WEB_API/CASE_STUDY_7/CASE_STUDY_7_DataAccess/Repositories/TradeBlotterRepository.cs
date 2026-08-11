@@ -13,7 +13,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace CASE_STUDY_7_DataAccess.Reposiotires.TradeBlotteRepo
+namespace CASE_STUDY_7_DataAccess.Repositories
 {
     public class TradeBlotterRepository : ITradeBlotterRepository
     {
@@ -59,7 +59,7 @@ namespace CASE_STUDY_7_DataAccess.Reposiotires.TradeBlotteRepo
                     BuySell = x.BuySell,
                     Quantity = x.Quantity,
                     Price = x.Price,
-                    GrossNotionalAmount = x.GrossNotionalAmount ?? (x.Quantity * x.Price)
+                    GrossNotionalAmount = x.GrossNotionalAmount ?? x.Quantity * x.Price
                 }).ToListAsync(cancellationToken);
 
             _logger.LogInformation("Fetched {FetchedCount} trade items for Page {PageNumber} (Total records matching filter: {TotalCount})",
@@ -118,7 +118,7 @@ namespace CASE_STUDY_7_DataAccess.Reposiotires.TradeBlotteRepo
                 .GroupBy(x => new { x.TraderId, x.TraderName })
                 .Select(g => new
                 {
-                    TraderId = g.Key.TraderId,
+                    g.Key.TraderId,
                     TraderName = string.IsNullOrEmpty(g.Key.TraderName) ? "Unknown" : g.Key.TraderName,
                     TotalVolume = g.Sum(x => (decimal?)(x.Quantity * x.Price)) ?? 0m
                 })
@@ -164,7 +164,7 @@ namespace CASE_STUDY_7_DataAccess.Reposiotires.TradeBlotteRepo
             string headers = "Trade ID,Trade Date,Asset Class,Security,Trader,Side,Quantity,Price,Gross Notional";
 
             return CsvExportService.BuildCsvStream(headers, items, x =>
-                $"\"{x.TradeId}\",\"{x.TradeDate:yyyy-MM-dd}\",\"{x.AssetClass ?? "-"}\",\"{x.SecurityName ?? x.SecurityId}\",\"{x.TraderName ?? x.TraderId.ToString()}\",\"{x.BuySell}\",{x.Quantity},{x.Price:F2},{(x.GrossNotionalAmount ?? (x.Quantity * x.Price)):F2}"
+                $"\"{x.TradeId}\",\"{x.TradeDate:yyyy-MM-dd}\",\"{x.AssetClass ?? "-"}\",\"{x.SecurityName ?? x.SecurityId}\",\"{x.TraderName ?? x.TraderId.ToString()}\",\"{x.BuySell}\",{x.Quantity},{x.Price:F2},{x.GrossNotionalAmount ?? x.Quantity * x.Price:F2}"
             );
         }
 

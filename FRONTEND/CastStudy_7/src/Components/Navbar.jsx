@@ -8,6 +8,9 @@ export default function Navbar() {
   const navItems = [
     { label: 'Trade Blotter', path: '/tradeblotter' },
     { label: 'P&L Summary', path: '/pnl' },
+    {
+        label: 'Real-time', path: '/real'
+    }
   ];
 
   return (

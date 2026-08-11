@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+import dayjs from 'dayjs';
 import {
   Container, Typography, CircularProgress, Alert,
   Box, Paper, Grid, FormControl, InputLabel, Select, MenuItem, Button, Chip
@@ -133,6 +134,7 @@ export default function PnLSummaryPage() {
                 label="As Of Date (Optional)"
                 value={asOfDate}
                 onChange={(newValue) => setAsOfDate(newValue)}
+                maxDate={dayjs()}
                 format="YYYY-MM-DD"
                 slotProps={{ textField: { size: 'small', fullWidth: true, placeholder: 'YYYY-MM-DD' } }}
               />

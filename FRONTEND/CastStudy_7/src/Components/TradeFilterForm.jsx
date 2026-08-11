@@ -43,6 +43,7 @@ export default function TradeFilterForm({ onFilterChange, onReset }) {
 
   // 1. Single consolidated local state
   const [filters, setFilters] = useState(INITIAL_FILTERS);
+  const today = new Date().toISOString().split('T')[0];
 
   useEffect(() => {
     const loadDropdownData = async () => {
@@ -231,27 +232,31 @@ export default function TradeFilterForm({ onFilterChange, onReset }) {
           </Select>
         </FormControl>
 
+
+
         {/* Date Inputs */}
         <TextField
-          label="From Date"
-          type="date"
-          value={filters.fromDate}
-          onChange={handleChange('fromDate')}
-          onBlur={handleCommit} 
-          InputLabelProps={{ shrink: true }}
-          sx={{ width: 150 }}
-        />
+      label="From Date"
+      type="date"
+      value={filters.fromDate}
+      onChange={handleChange('fromDate')}
+      onBlur={handleCommit} 
+      InputLabelProps={{ shrink: true }}
+      inputProps={{ max: today }} // Restricts date selection to today or earlier
+      sx={{ width: 150 }}
+    />
 
-        <TextField
-          label="To Date"
-          type="date"
-          value={filters.toDate}
-          onChange={handleChange('toDate')}
-          onBlur={handleCommit}
-          InputLabelProps={{ shrink: true }}
-          sx={{ width: 150 }}
-        />
-
+    <TextField
+      label="To Date"
+      type="date"
+      value={filters.toDate}
+      onChange={handleChange('toDate')}
+      onBlur={handleCommit}
+      InputLabelProps={{ shrink: true }}
+      inputProps={{ max: today }} // Restricts date selection to today or earlier
+      sx={{ width: 150 }}
+      />
+      
       </Box>
     </Box>
   );

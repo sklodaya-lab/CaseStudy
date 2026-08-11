@@ -6,6 +6,7 @@ import PnLSummaryPage from './pages/PnLSummaryPage';
 import PnLTimeSeriesPage from './pages/PnLTimeSeriesPage';
 import TradeBlotterPage from './pages/TradeBlotterPage'
 import Navbar from './Components/Navbar';
+import LOL from './pages/LOL';
 
 function App() {
 
@@ -17,7 +18,8 @@ function App() {
         <Route path='/pnl' element={<PnLSummaryPage/>}/>
         <Route path="/pnl/timeseries/:securityId" element={<PnLTimeSeriesPage/>} />
         <Route path="/tradeblotter" element={<TradeBlotterPage />} />
-        <Route path='/home' element={<Home/>} />
+        <Route path='/real' element={<Home/>} />
+        <Route path='*' element={<LOL/>} />
       </Routes>
     </>
   )

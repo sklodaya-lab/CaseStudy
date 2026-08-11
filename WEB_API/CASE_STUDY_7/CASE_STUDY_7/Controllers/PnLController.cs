@@ -20,11 +20,6 @@ namespace CASE_STUDY_7.Controllers
             _logger = logger;
         }
 
-        /// <summary>
-        /// GET /api/PnL/summary?asOfDate=2026-03-31&securityId=SEC1
-        /// Returns Realized PnL, Unrealized MTM PnL, Net Positions, and WAC.
-        /// Defaults to case study benchmark date: 2026-03-31 if omitted.
-        /// </summary>
         [HttpGet("summary")]
         public async Task<IActionResult> GetPnLSummary(
             [FromQuery] DateOnly? asOfDate,
@@ -32,8 +27,10 @@ namespace CASE_STUDY_7.Controllers
         {
             try
             {
+
                 // Default to end-of-period benchmark date specified in case study
                 var targetDate = asOfDate ?? new DateOnly(2026, 03, 31);
+                Console.WriteLine(targetDate);
 
                 var summaryResults = await _pnlService.GetPnLSummaryAsync(targetDate, securityId);
                 return Ok(summaryResults);
@@ -45,10 +42,6 @@ namespace CASE_STUDY_7.Controllers
             }
         }
 
-        /// <summary>
-        /// GET /api/PnL/timeseries?securityId=SEC1&asOfDate=2026-03-31
-        /// Returns daily historical PnL time series metrics for a specific security.
-        /// </summary>
         [HttpGet("timeseries")]
         public async Task<IActionResult> GetPnlTimeSeries([FromQuery] string securityId, [FromQuery] DateOnly? asOfDate)
         {
