@@ -4,8 +4,10 @@ using CASE_STUDY_7_DataAccess.Services;
 using CASE_STUDY_7_Models.DTOs;
 using CASE_STUDY_7_Models.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -16,16 +18,19 @@ namespace CASE_STUDY_7_DataAccess.Reposiotires.TradeBlotteRepo
     public class TradeBlotterRepository : ITradeBlotterRepository
     {
         private readonly Vantage7Context _context;
+        private readonly ILogger<TradeBlotterRepository> _logger; 
 
-        public TradeBlotterRepository(Vantage7Context context)
+        public TradeBlotterRepository(Vantage7Context context, ILogger<TradeBlotterRepository> logger)
         {
             _context = context;
+            _logger = logger;
         }
 
-        public async Task<TradeBlotterPagedResultDto> GetTradeBlotterAsync(
-            TradeBlotterRequestDto request,
-            CancellationToken cancellationToken = default)
+        public async Task<TradeBlotterPagedResultDto> GetTradeBlotterAsync(TradeBlotterRequestDto request,CancellationToken cancellationToken = default)
         {
+            int pageNumber = request.PageNumber <= 0 ? 1 : request.PageNumber;
+            int pageSize = request.PageSize <= 0 ? 10 : request.PageSize;
+
             var query = _context.VwTradeBlotters.AsNoTracking().AsQueryable();
 
             query = ApplyFilters(query, request);
@@ -34,21 +39,14 @@ namespace CASE_STUDY_7_DataAccess.Reposiotires.TradeBlotteRepo
 
             if (request.IsDescending)
             {
-                query = query.OrderByDescending(x => x.TradeDate)
-                             .ThenByDescending(x => x.TradeId);
+                query = query.OrderByDescending(x => x.TradeDate).ThenByDescending(x => x.TradeId);
             }
             else
             {
-                query = query.OrderBy(x => x.TradeDate)
-                             .ThenBy(x => x.TradeId);
+                query = query.OrderBy(x => x.TradeDate).ThenBy(x => x.TradeId);
             }
 
-            int pageNumber = request.PageNumber <= 0 ? 1 : request.PageNumber;
-            int pageSize = request.PageSize <= 0 ? 10 : request.PageSize;
-
-            var items = await query
-                .Skip((request.PageNumber - 1) * request.PageSize)
-                .Take(request.PageSize)
+            var items = await query.Skip((pageNumber - 1) * pageSize).Take(pageSize)
                 .Select(x => new TradeBlotterItemDto
                 {
                     TradeId = x.TradeId,
@@ -61,28 +59,49 @@ namespace CASE_STUDY_7_DataAccess.Reposiotires.TradeBlotteRepo
                     BuySell = x.BuySell,
                     Quantity = x.Quantity,
                     Price = x.Price,
-                    GrossNotionalAmount = x.GrossNotionalAmount ?? 0m
-                })
-                .ToListAsync(cancellationToken);
+                    GrossNotionalAmount = x.GrossNotionalAmount ?? (x.Quantity * x.Price)
+                }).ToListAsync(cancellationToken);
+
+            _logger.LogInformation("Fetched {FetchedCount} trade items for Page {PageNumber} (Total records matching filter: {TotalCount})",
+                items.Count, pageNumber, totalCount);
 
             return new TradeBlotterPagedResultDto
             {
                 TotalRecords = totalCount,
-                PageNumber = request.PageNumber,
-                PageSize = request.PageSize,
+                PageNumber = pageNumber,
+                PageSize = pageSize,
                 Items = items
             };
         }
 
-        public async Task<object> GetTradeBlotterAnalyticsAsync(
-    TradeBlotterRequestDto request,
-    CancellationToken cancellationToken = default)
+        public async Task<object> GetTradeBlotterAnalyticsAsync(TradeBlotterRequestDto request, CancellationToken cancellationToken = default)
         {
-            var query = _context.VwTradeBlotters.AsNoTracking().AsQueryable();
+            var baseQuery = _context.VwTradeBlotters.AsNoTracking().AsQueryable();
 
-            query = ApplyFilters(query, request);
+            if (request.FromDate.HasValue)
+                baseQuery = baseQuery.Where(x => x.TradeDate >= request.FromDate.Value);
 
-            var summaryMetrics = await query
+            if (request.ToDate.HasValue)
+                baseQuery = baseQuery.Where(x => x.TradeDate <= request.ToDate.Value);
+
+            if (request.SecurityIds != null && request.SecurityIds.Any())
+                baseQuery = baseQuery.Where(x => request.SecurityIds.Contains(x.SecurityId));
+
+            var fullyFilteredQuery = baseQuery;
+            if (request.AssetClasses != null && request.AssetClasses.Any())
+                fullyFilteredQuery = fullyFilteredQuery.Where(x => request.AssetClasses.Contains(x.AssetClass));
+            if (request.TraderIds != null && request.TraderIds.Any())
+                fullyFilteredQuery = fullyFilteredQuery.Where(x => request.TraderIds.Contains(x.TraderId));
+
+            var traderQuery = baseQuery;
+            if (request.AssetClasses != null && request.AssetClasses.Any())
+                traderQuery = traderQuery.Where(x => request.AssetClasses.Contains(x.AssetClass));
+
+            var assetClassQuery = baseQuery;
+            if (request.TraderIds != null && request.TraderIds.Any())
+                assetClassQuery = assetClassQuery.Where(x => request.TraderIds.Contains(x.TraderId));
+
+            var summaryMetrics = await fullyFilteredQuery
                 .GroupBy(x => 1)
                 .Select(g => new
                 {
@@ -95,22 +114,18 @@ namespace CASE_STUDY_7_DataAccess.Reposiotires.TradeBlotteRepo
                 })
                 .FirstOrDefaultAsync(cancellationToken);
 
-            var totalNotionalVolume = summaryMetrics?.TotalNotionalVolume ?? 0m;
-            var totalTradeCount = summaryMetrics?.TotalTradeCount ?? 0;
-            var buyNotionalVolume = summaryMetrics?.BuyNotionalVolume ?? 0m;
-            var sellNotionalVolume = summaryMetrics?.SellNotionalVolume ?? 0m;
-
-            var traderBreakdown = await query
-                .GroupBy(x => x.TraderName)
+            var traderBreakdown = await traderQuery
+                .GroupBy(x => new { x.TraderId, x.TraderName })
                 .Select(g => new
                 {
-                    TraderName = string.IsNullOrEmpty(g.Key) ? "Unknown" : g.Key,
+                    TraderId = g.Key.TraderId,
+                    TraderName = string.IsNullOrEmpty(g.Key.TraderName) ? "Unknown" : g.Key.TraderName,
                     TotalVolume = g.Sum(x => (decimal?)(x.Quantity * x.Price)) ?? 0m
                 })
                 .OrderByDescending(x => x.TotalVolume)
                 .ToListAsync(cancellationToken);
 
-            var assetClassBreakdown = await query
+            var assetClassBreakdown = await assetClassQuery
                 .GroupBy(x => x.AssetClass)
                 .Select(g => new
                 {
@@ -120,18 +135,40 @@ namespace CASE_STUDY_7_DataAccess.Reposiotires.TradeBlotteRepo
                 .OrderByDescending(x => x.TotalVolume)
                 .ToListAsync(cancellationToken);
 
+            _logger.LogInformation("Computed Trade Blotter Analytics. Total Volume: {TotalVolume:C}, Total Trades: {TotalTrades}",
+                summaryMetrics?.TotalNotionalVolume ?? 0m, summaryMetrics?.TotalTradeCount ?? 0);
+
             return new
             {
-                TotalNotionalVolume = totalNotionalVolume,
-                TotalTradeCount = totalTradeCount,
-                BuyNotionalVolume = buyNotionalVolume,
-                SellNotionalVolume = sellNotionalVolume,
+                TotalNotionalVolume = summaryMetrics?.TotalNotionalVolume ?? 0m,
+                TotalTradeCount = summaryMetrics?.TotalTradeCount ?? 0,
+                BuyNotionalVolume = summaryMetrics?.BuyNotionalVolume ?? 0m,
+                SellNotionalVolume = summaryMetrics?.SellNotionalVolume ?? 0m,
                 AssetClassBreakdown = assetClassBreakdown,
                 TraderBreakdown = traderBreakdown
             };
         }
+        public async Task<Stream> ExportTradeBlotterToStreamAsync(TradeBlotterRequestDto request, CancellationToken cancellationToken = default)
+        {
+            var query = _context.VwTradeBlotters.AsNoTracking().AsQueryable();
 
-        private static IQueryable<VwTradeBlotter> ApplyFilters(IQueryable<VwTradeBlotter> query,TradeBlotterRequestDto request)
+            query = ApplyFilters(query, request);
+
+            var items = await query
+                .OrderByDescending(x => x.TradeDate)
+                .ThenByDescending(x => x.TradeId)
+                .ToListAsync(cancellationToken);
+
+            _logger.LogInformation("Exporting {Count} trades to CSV stream", items.Count);
+
+            string headers = "Trade ID,Trade Date,Asset Class,Security,Trader,Side,Quantity,Price,Gross Notional";
+
+            return CsvExportService.BuildCsvStream(headers, items, x =>
+                $"\"{x.TradeId}\",\"{x.TradeDate:yyyy-MM-dd}\",\"{x.AssetClass ?? "-"}\",\"{x.SecurityName ?? x.SecurityId}\",\"{x.TraderName ?? x.TraderId.ToString()}\",\"{x.BuySell}\",{x.Quantity},{x.Price:F2},{(x.GrossNotionalAmount ?? (x.Quantity * x.Price)):F2}"
+            );
+        }
+
+        private static IQueryable<VwTradeBlotter> ApplyFilters(IQueryable<VwTradeBlotter> query, TradeBlotterRequestDto request)
         {
             if (request.FromDate.HasValue)
             {
@@ -185,26 +222,8 @@ namespace CASE_STUDY_7_DataAccess.Reposiotires.TradeBlotteRepo
                     query = query.Where(t => cleanAssetClasses.Contains(t.AssetClass));
                 }
             }
+
             return query;
         }
-
-        public async Task<Stream> ExportTradeBlotterToStreamAsync(TradeBlotterRequestDto request, CancellationToken cancellationToken = default)
-        {
-            var query = _context.VwTradeBlotters.AsNoTracking().AsQueryable();
-
-            query = ApplyFilters(query, request);
-
-            var items = await query
-                .OrderByDescending(x => x.TradeDate)
-                .ThenByDescending(x=>x.TradeId)
-                .ToListAsync(cancellationToken);
-
-            string headers = "Trade ID,Trade Date,Asset Class,Security,Trader,Side,Quantity,Price,Gross Notional";
-
-            return CsvExportService.BuildCsvStream(headers, items, x =>
-                $"\"{x.TradeId}\",\"{x.TradeDate:yyyy-MM-dd}\",\"{x.AssetClass ?? "-"}\",\"{x.SecurityName ?? x.SecurityId}\",\"{x.TraderName ?? x.TraderId.ToString()}\",\"{x.BuySell}\",{x.Quantity},{x.Price:F2},{(x.GrossNotionalAmount ?? (x.Quantity * x.Price)):F2}"
-            );
-        }
-
     }
 }

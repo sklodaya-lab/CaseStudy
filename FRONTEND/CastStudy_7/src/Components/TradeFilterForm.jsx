@@ -91,7 +91,6 @@ export default function TradeFilterForm({ onFilterChange, onReset }) {
     }));
   };
 
-  
   const handleCommit = () => {
     onFilterChange(filters);
   };
@@ -112,14 +111,38 @@ export default function TradeFilterForm({ onFilterChange, onReset }) {
         boxShadow: '0 1px 3px rgba(0,0,0,0.08)' 
       }}
     >
-      <Box sx={{ mb: 1.5, color: '#64748b', fontSize: '0.75rem', fontWeight: 700, letterSpacing: '0.05em' }}>
-        FILTER BLOTTER
+      {/* Header Row: Label on Left, Reset Button on Right */}
+      <Box 
+        display="flex" 
+        justifyContent="space-between" 
+        alignItems="center" 
+        sx={{ mb: 1.5 }}
+      >
+        <Box sx={{ color: '#64748b', fontSize: '0.75rem', fontWeight: 700, letterSpacing: '0.05em' }}>
+          FILTER BLOTTER
+        </Box>
+
+        <Button
+          variant="text"
+          size="small"
+          startIcon={<RestartAltIcon fontSize="small" />}
+          onClick={handleReset}
+          sx={{ 
+            color: '#64748b', 
+            fontWeight: 600, 
+            fontSize: '0.75rem',
+            '&:hover': { color: '#0f172a', backgroundColor: '#f1f5f9' } 
+          }}
+        >
+          RESET FILTERS
+        </Button>
       </Box>
 
+      {/* Filter Inputs Grid Row */}
       <Box display="flex" gap={2} alignItems="center" flexWrap="wrap">
         
         {/* Asset Classes Multi-Select */}
-        <FormControl sx={{ minWidth: 200, flex: 1 }}>
+        <FormControl sx={{ minWidth: 180, flex: 1 }}>
           <InputLabel id="asset-class-label">Asset Classes</InputLabel>
           <Select
             labelId="asset-class-label"
@@ -147,7 +170,7 @@ export default function TradeFilterForm({ onFilterChange, onReset }) {
         </FormControl>
 
         {/* Securities Multi-Select */}
-        <FormControl sx={{ minWidth: 220, flex: 1 }}>
+        <FormControl sx={{ minWidth: 200, flex: 1 }}>
           <InputLabel id="security-label">Securities</InputLabel>
           <Select
             labelId="security-label"
@@ -178,14 +201,14 @@ export default function TradeFilterForm({ onFilterChange, onReset }) {
         </FormControl>
 
         {/* Traders Multi-Select */}
-        <FormControl sx={{ minWidth: 220, flex: 1 }}>
+        <FormControl sx={{ minWidth: 200, flex: 1 }}>
           <InputLabel id="trader-label">Traders</InputLabel>
           <Select
             labelId="trader-label"
             multiple
             value={filters.traderIds}
             onChange={handleChange('traderIds')}
-            onClose={handleCommit} // 
+            onClose={handleCommit} 
             input={<OutlinedInput label="Traders" />}
             MenuProps={MenuProps}
             renderValue={(selected) => (
@@ -228,15 +251,6 @@ export default function TradeFilterForm({ onFilterChange, onReset }) {
           InputLabelProps={{ shrink: true }}
           sx={{ width: 150 }}
         />
-
-        <Button
-          variant="outlined"
-          startIcon={<RestartAltIcon />}
-          onClick={handleReset}
-          sx={{ height: 56, px: 3, color: '#334155', borderColor: '#cbd5e1' }}
-        >
-          RESET
-        </Button>
 
       </Box>
     </Box>
