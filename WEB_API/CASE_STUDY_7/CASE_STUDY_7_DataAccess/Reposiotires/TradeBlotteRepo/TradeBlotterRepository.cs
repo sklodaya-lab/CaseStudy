@@ -217,7 +217,7 @@ namespace CASE_STUDY_7_DataAccess.Reposiotires.TradeBlotteRepo
             string headers = "Trade ID,Trade Date,Asset Class,Security,Trader,Side,Quantity,Price,Gross Notional";
 
             return CsvExportService.BuildCsvStream(headers, items, x =>
-                $"\"{x.TradeId}\",\"{x.TradeDate:yyyy-MM-dd}\",\"{x.AssetClass ?? "-"}\",\"{x.SecurityName ?? x.SecurityId}\",\"{x.TraderName ?? x.TraderId.ToString()}\",\"{x.BuySell}\",{x.Quantity},{x.Price:F2},{(x.GrossNotionalAmount ?? (x.Quantity * x.Price)):F2}"
+                $"\"{x.TradeId}\",\"{x.TradeDate:yyyy-MM-dd}\",\"{x.AssetClass ?? "-"}\",\"{x.SecurityName ?? x.SecurityId}\",\"{x.TraderName ?? x.TraderId.ToString()}\",\"{x.BuySell}\",{x.Quantity},{x.Price:F2},{x.GrossNotionalAmount ?? x.Quantity * x.Price:F2}"
             );
         }
 
