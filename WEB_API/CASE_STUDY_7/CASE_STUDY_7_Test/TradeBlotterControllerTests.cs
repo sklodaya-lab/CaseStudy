@@ -1,6 +1,7 @@
 ﻿using CASE_STUDY_7.Controllers;
 using CASE_STUDY_7_Models.DTOs;
 using CASE_STUDY_7_Models.Interfaces;
+using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using System;
@@ -15,11 +16,12 @@ namespace CASE_STUDY_7_Test
     {
         private readonly Mock<ITradeBlotterRepository> _mockRepo;
         private readonly TradeBlotterController _controller;
+        private readonly Mock<ILogger<TradeBlotterController>> _mockLogger;
 
         public TradeBlotterControllerTests()
         {
             _mockRepo = new Mock<ITradeBlotterRepository>();
-            _controller = new TradeBlotterController(_mockRepo.Object);
+            _controller = new TradeBlotterController(_mockRepo.Object, _mockLogger.Object);
         }
 
         [Fact]
