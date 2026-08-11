@@ -30,7 +30,7 @@ namespace CASE_STUDY_7_Test
             {
                 PageNumber = 1,
                 PageSize = 10,
-                SecurityId = "EQ04"
+                SecurityIds = ["EQ04"]
             };
 
             var expectedResult = new TradeBlotterPagedResultDto
@@ -47,7 +47,7 @@ namespace CASE_STUDY_7_Test
                         SecurityId = "EQ04",
                         SecurityName = "Apple Inc",
                         TraderId = 5,
-                        TraderName = "John Doe",
+                        TraderName = "Raghav Singh",
                         BuySell = "BUY",
                         Quantity = 100,
                         Price = 150.00m,
@@ -60,10 +60,8 @@ namespace CASE_STUDY_7_Test
                 .Setup(repo => repo.GetTradeBlotterAsync(It.IsAny<TradeBlotterRequestDto>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(expectedResult);
 
-            // Act: Pass CancellationToken.None to match your controller method signature
             var result = await _controller.GetTradeBlotter(requestDto, CancellationToken.None);
 
-            // Assert
             var okResult = Assert.IsType<OkObjectResult>(result);
             var returnData = Assert.IsType<TradeBlotterPagedResultDto>(okResult.Value);
 
@@ -75,8 +73,7 @@ namespace CASE_STUDY_7_Test
         [Fact]
         public async Task GetTradeBlotter_NoMatches_ReturnsOkWithEmptyItems()
         {
-            // Arrange
-            var requestDto = new TradeBlotterRequestDto { SecurityId = "NON_EXISTENT" };
+            var requestDto = new TradeBlotterRequestDto { SecurityIds = ["NON_EXISTENT"] };
             var emptyResult = new TradeBlotterPagedResultDto
             {
                 TotalRecords = 0,
@@ -89,51 +86,85 @@ namespace CASE_STUDY_7_Test
                 .Setup(repo => repo.GetTradeBlotterAsync(It.IsAny<TradeBlotterRequestDto>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(emptyResult);
 
-            // Act
             var result = await _controller.GetTradeBlotter(requestDto, CancellationToken.None);
 
-            // Assert
             var okResult = Assert.IsType<OkObjectResult>(result);
             var returnData = Assert.IsType<TradeBlotterPagedResultDto>(okResult.Value);
 
+            Assert.Equal(200, okResult.StatusCode);
             Assert.Equal(0, returnData.TotalRecords);
             Assert.Empty(returnData.Items);
         }
 
-       [Fact]
-public async Task GetTradeBlotter_InvalidModelState_ReturnsBadRequest()
-{
-    // Arrange
-    var requestDto = new TradeBlotterRequestDto();
-    _controller.ModelState.AddModelError("FromDate", "FromDate cannot be after ToDate");
+        
+           [Fact]
+        public async Task GetTradeBlotter_CancellationTokenCancelled_ThrowsTaskCanceledException()
+        {
 
-    // Act: Simulate what ASP.NET Core's [ApiController] does at runtime
-    IActionResult result;
-    if (!_controller.ModelState.IsValid)
-    {
-        result = _controller.BadRequest(_controller.ModelState);
-    }
-    else
-    {
-        result = await _controller.GetTradeBlotter(requestDto, CancellationToken.None);
-    }
+            var requestDto = new TradeBlotterRequestDto();
+            using var cts = new CancellationTokenSource();
+            cts.Cancel(); 
 
-    // Assert
-    var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
-    Assert.Equal(400, badRequestResult.StatusCode);
-}
+            _mockRepo
+                .Setup(repo => repo.GetTradeBlotterAsync(It.IsAny<TradeBlotterRequestDto>(), cts.Token))
+                .ThrowsAsync(new TaskCanceledException());
+
+            await Assert.ThrowsAsync<TaskCanceledException>(() => _controller.GetTradeBlotter(requestDto, cts.Token));
+        }
 
         [Fact]
-        public async Task GetTradeBlotter_RepositoryThrowsException_PropagatesException()
+        public async Task GetTradeBlotter_NullRequestDto_HandlesGracefullyAndReturnsAllTrades()
         {
-            // Arrange
-            var requestDto = new TradeBlotterRequestDto();
+            var allTradesResult = new TradeBlotterPagedResultDto
+            {
+                TotalRecords = 2,
+                PageNumber = 1,
+                PageSize = 10,
+                Items = new List<TradeBlotterItemDto>
+        {
+            new TradeBlotterItemDto { TradeId = 1, SecurityId = "EQ04", Price = 150.00m },
+            new TradeBlotterItemDto { TradeId = 2, SecurityId = "FI01", Price = 98.50m }
+        }
+            };
+
             _mockRepo
                 .Setup(repo => repo.GetTradeBlotterAsync(It.IsAny<TradeBlotterRequestDto>(), It.IsAny<CancellationToken>()))
-                .ThrowsAsync(new Exception("Database connection failure"));
+                .ReturnsAsync(allTradesResult);
 
-            // Act & Assert
-            await Assert.ThrowsAsync<Exception>(() => _controller.GetTradeBlotter(requestDto, CancellationToken.None));
+
+            var result = await _controller.GetTradeBlotter(null, CancellationToken.None);
+
+            var okResult = Assert.IsType<OkObjectResult>(result);
+            var returnData = Assert.IsType<TradeBlotterPagedResultDto>(okResult.Value);
+
+            Assert.Equal(200, okResult.StatusCode);
+            Assert.Equal(2, returnData.TotalRecords); 
+            Assert.Equal(2, returnData.Items.Count);
         }
+
+        [Fact]
+        public async Task ExportTradesCsv_ValidRequest_ReturnsFileResultWithCsvMimeType()
+        {
+ 
+            var requestDto = new TradeBlotterRequestDto { SecurityIds = ["EQ04"] };
+
+            var fakeCsvBytes = System.Text.Encoding.UTF8.GetBytes("TradeId,SecurityId,Price\n1,EQ04,150.00");
+
+            var fakeCsvStream = new MemoryStream(fakeCsvBytes);
+
+            _mockRepo
+                .Setup(repo => repo.ExportTradeBlotterToStreamAsync(It.IsAny<TradeBlotterRequestDto>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(fakeCsvStream); 
+
+            var result = await _controller.ExportTradeBlotter(requestDto, CancellationToken.None);
+
+            var fileResult = Assert.IsType<FileStreamResult>(result);
+
+            Assert.Equal("text/csv", fileResult.ContentType);
+            Assert.NotNull(fileResult.FileDownloadName);
+
+            _mockRepo.Verify(repo => repo.ExportTradeBlotterToStreamAsync(requestDto, CancellationToken.None), Times.Once);
+        }
+
     }
 }

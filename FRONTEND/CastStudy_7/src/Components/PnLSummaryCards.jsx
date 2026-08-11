@@ -8,7 +8,7 @@ export default function PnLSummaryCards({ totalPnL, totalRealized, totalUnrealiz
   return (
     <Grid container spacing={3} sx={{ mb: 4, width: '100%' }}>
       {/* Changed 'size' prop to standard item props: item xs={12} sm={4} */}
-      <Grid item xs={12} sm={4} size={6}>
+      <Grid item xs={12} sm={4} size={4}>
         <Card elevation={2} sx={{ height: '100%' }}>
           <CardContent>
             <Typography color="text.secondary" variant="subtitle2" gutterBottom>
@@ -21,7 +21,7 @@ export default function PnLSummaryCards({ totalPnL, totalRealized, totalUnrealiz
         </Card>
       </Grid>
 
-      <Grid item xs={12} sm={4} size={6}>
+      <Grid item xs={12} sm={4} size={4}>
         <Card elevation={2} sx={{ height: '100%' }}>
           <CardContent>
             <Typography color="text.secondary" variant="subtitle2" gutterBottom>
@@ -34,7 +34,7 @@ export default function PnLSummaryCards({ totalPnL, totalRealized, totalUnrealiz
         </Card>
       </Grid>
 
-      <Grid item xs={12} sm={4}>
+      <Grid item xs={12} sm={4} size={4}>
         <Card elevation={2} sx={{ height: '100%' }}>
           <CardContent>
             <Typography color="text.secondary" variant="subtitle2" gutterBottom>

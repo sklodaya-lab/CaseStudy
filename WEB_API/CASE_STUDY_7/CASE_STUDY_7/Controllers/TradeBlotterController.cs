@@ -1,4 +1,5 @@
-﻿using CASE_STUDY_7_Models.DTOs;
+﻿using CASE_STUDY_7_DataAccess.Reposiotires.TradeBlotteRepo;
+using CASE_STUDY_7_Models.DTOs;
 using CASE_STUDY_7_Models.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,35 +17,17 @@ namespace CASE_STUDY_7.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetTradeBlotter(
-            [FromQuery] TradeBlotterRequestDto request,
-            [FromQuery] string? securityIdList,
-            [FromQuery] string? traderIdList,
-            CancellationToken cancellationToken)
+        public async Task<IActionResult> GetTradeBlotter([FromQuery] TradeBlotterRequestDto request,CancellationToken cancellationToken)
         {
-            request.SecurityIds = new List<string>();
-            request.TraderIds = new List<int>();
-
-            if (!string.IsNullOrWhiteSpace(securityIdList))
+            Console.WriteLine($"[DEBUG] SecurityIds count: {request?.SecurityIds?.Count ?? 0}");
+            if (request?.SecurityIds != null)
             {
-                request.SecurityIds = securityIdList
-                    .Split(',', StringSplitOptions.RemoveEmptyEntries)
-                    .Select(s => s.Trim())
-                    .Where(s => !string.IsNullOrEmpty(s))
-                    .ToList();
+                foreach (var id in request.SecurityIds)
+                {
+                    Console.WriteLine($"[DEBUG] SecurityId Value: '{id}'");
+                }
             }
 
-            // Parse comma-separated trader string ("4,5") safely into List<int>
-            if (!string.IsNullOrWhiteSpace(traderIdList))
-            {
-                request.TraderIds = traderIdList
-                    .Split(',', StringSplitOptions.RemoveEmptyEntries)
-                    .Select(s => s.Trim())
-                    .Select(s => int.TryParse(s, out int val) ? val : (int?)null)
-                    .Where(val => val.HasValue)
-                    .Select(val => val!.Value)
-                    .ToList();
-            }
 
             var result = await _repository.GetTradeBlotterAsync(request, cancellationToken);
             if (result == null)
@@ -53,6 +36,22 @@ namespace CASE_STUDY_7.Controllers
             }
 
             return Ok(result);
+        }
+
+        [HttpGet("analytics")]
+        public async Task<IActionResult> GetTradeBlotterAnalytics([FromQuery] TradeBlotterRequestDto request,CancellationToken cancellationToken)
+        {
+            var analyticsData = await _repository.GetTradeBlotterAnalyticsAsync(request, cancellationToken);
+            return Ok(analyticsData);
+        }
+
+        [HttpGet("export")]
+        public async Task<IActionResult> ExportTradeBlotter([FromQuery] TradeBlotterRequestDto request,CancellationToken cancellationToken)
+        {
+            var stream = await _repository.ExportTradeBlotterToStreamAsync(request, cancellationToken);
+            var fileName = $"TradeBlotter_{DateTime.UtcNow:yyyyMMdd_HHmmss}.csv";
+
+            return File(stream, "text/csv", fileName);
         }
     }
 }

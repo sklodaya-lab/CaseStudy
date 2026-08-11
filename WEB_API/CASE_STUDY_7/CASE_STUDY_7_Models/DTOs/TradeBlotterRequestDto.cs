@@ -11,8 +11,12 @@ namespace CASE_STUDY_7_Models.DTOs
         public DateOnly? FromDate { get; set; }
         public DateOnly? ToDate { get; set; }
 
+
         public List<string>? SecurityIds { get; set; }
-        public List<int>? TraderIds { get; set; } 
+        public List<string>? AssetClasses { get; set; }
+        public List<int>? TraderIds { get; set; }
+
+        public bool IsDescending { get; set; } = true;
 
         private int pageNumber = 1;
         private int pageSize = 50;

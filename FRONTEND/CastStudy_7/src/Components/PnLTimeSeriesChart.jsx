@@ -4,10 +4,12 @@ import { LineChart } from '@mui/x-charts/LineChart';
 
 export default function PnLTimeSeriesChart({ data = [] }) {
   if (!data || data.length === 0) return null;
-
+console.log(data)
   const xAxisData = data.map((item) => item.valuationDate);
   const totalPnLData = data.map((item) => Number(item.totalPnL) || 0);
   const closingPriceData = data.map((item) => Number(item.closingPrice) || 0);
+  const UnrealisedPnLData = data.map((item) => Number(item.mtmUnrealizedPnL) || 0);
+  const wacData = data.map((item) => Number(item.weightedAverageCost) || 0)
 
   const valueFormatter = (value) =>
     new Intl.NumberFormat('en-IN', {
@@ -38,9 +40,34 @@ export default function PnLTimeSeriesChart({ data = [] }) {
             valueFormatter,
           },
           {
+            data: UnrealisedPnLData,
+            label: 'Unrealised PnL',
+            color: '#eb8825',
+            valueFormatter,
+          },
+        ]}
+        height={350}
+        margin={{ top: 20, bottom: 40, left: 80, right: 20 }}
+      />
+      <LineChart
+        xAxis={[
+          {
+            scaleType: 'point',
+            data: xAxisData,
+            label: 'Valuation Date',
+          },
+        ]}
+        series={[
+          {
             data: closingPriceData,
             label: 'Closing Price',
-            color: '#2563eb',
+            color: '#eb8825',
+            valueFormatter,
+          },
+          {
+            data: wacData,
+            label: ' Weighted Average Cost',
+            color: '#16a34a',
             valueFormatter,
           },
         ]}

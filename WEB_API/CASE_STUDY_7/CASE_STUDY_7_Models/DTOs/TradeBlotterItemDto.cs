@@ -12,6 +12,7 @@ namespace CASE_STUDY_7_Models.DTOs
         public DateOnly TradeDate { get; set; }
         public string SecurityId { get; set; } = string.Empty;
         public string SecurityName { get; set; } = string.Empty;
+        public string? AssetClass { get; set; }
         public int TraderId { get; set; }
         public string TraderName { get; set; } = string.Empty;
         public string BuySell { get; set; } = string.Empty;

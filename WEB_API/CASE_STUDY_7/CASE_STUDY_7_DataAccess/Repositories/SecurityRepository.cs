@@ -27,8 +27,7 @@ namespace CASE_STUDY_7_DataAccess.Repositories
 
         public async Task<Security> GetByIdAsync(string securityId)
         {
-            var security = await _context.Securities.AsNoTracking()
-                .FirstOrDefaultAsync(s => s.SecurityId == securityId);
+            var security = await _context.Securities.AsNoTracking().FirstOrDefaultAsync(s => s.SecurityId == securityId);
             return security; 
         }
     }
